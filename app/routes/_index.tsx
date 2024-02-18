@@ -1,59 +1,42 @@
-import {
-  json,
-  type LoaderFunctionArgs,
-  type ActionFunctionArgs,
-} from "@remix-run/cloudflare";
-import { Form, useLoaderData } from "@remix-run/react";
-
-const key = "__my-key__";
-
-export async function loader({ context }: LoaderFunctionArgs) {
-  const { MY_KV } = context.env;
-  const value = await MY_KV.get(key);
-  return json({ value });
-}
-
-export async function action({ request, context }: ActionFunctionArgs) {
-  const { MY_KV: myKv } = context.env;
-
-  if (request.method === "POST") {
-    const formData = await request.formData();
-    const value = formData.get("value") as string;
-    await myKv.put(key, value);
-    return null;
-  }
-
-  if (request.method === "DELETE") {
-    await myKv.delete(key);
-    return null;
-  }
-
-  throw new Error(`Method not supported: "${request.method}"`);
-}
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef, useState } from "react";
 
 export default function Index() {
-  const { value } = useLoaderData<typeof loader>();
   return (
     <div>
-      <h1>Welcome to Remix</h1>
-      {value ? (
-        <>
-          <p>Value: {value}</p>
-          <Form method="DELETE">
-            <button>Delete</button>
-          </Form>
-        </>
-      ) : (
-        <>
-          <p>No value</p>
-          <Form method="POST">
-            <label htmlFor="value">Set value: </label>
-            <input type="text" name="value" id="value" required />
-            <br />
-            <button>Save</button>
-          </Form>
-        </>
-      )}
-    </div>
+      <div className="text-9xl">crstneia</div>
+      <Canvas>
+      <ambientLight intensity={Math.PI / 2} />
+      <spotLight
+        position={[10, 10, 10]}
+        angle={0.15}
+        penumbra={1}
+        decay={0}
+        intensity={Math.PI}
+      />
+      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+      <Box position={[-1.2, 0, 0]} />
+      <Box position={[1.2, 0, 0]} />
+    </Canvas></div>
+  );
+}
+
+function Box(props: any) {
+  const meshRef = useRef<(JSX.IntrinsicElements['mesh']) | null>(null);
+  const [hovered, setHover] = useState(false);
+  const [active, setActive] = useState(false);
+  useFrame((state, delta) => (meshRef.current!.rotation!.x += delta));
+  return (
+    <mesh
+      {...props}
+      ref={meshRef}
+      scale={active ? 1.5 : 1}
+      onClick={() => setActive(!active)}
+      onPointerOver={() => setHover(true)}
+      onPointerOut={() => setHover(false)}
+    >
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color={hovered ? "hotpink" : "tomato"} />
+    </mesh>
   );
 }
