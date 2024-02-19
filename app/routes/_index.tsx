@@ -16,7 +16,7 @@ import { parseReplay } from "~/parser";
 import { renderReplay } from "~/render";
 
 export default function Index() {
-  const setRenderData = store((state) => state.setRenderData);
+  const { setRenderData, frame, setFrame } = store();
 
   async function openFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -32,6 +32,20 @@ export default function Index() {
   return (
     <div className="grid h-screen place-items-center bg-slate-950 text-slate-200">
       <input type="file" onInput={openFile} />
+      <div>{frame}</div>
+      <input
+        type="range"
+        className="w-[800px]"
+        min={0}
+        max={8000}
+        value={frame}
+        onInput={(e) => {
+          const f = parseInt(e.currentTarget.value);
+          console.log(f);
+
+          setFrame(parseInt(e.currentTarget.value));
+        }}
+      />
       <div className="size-[800px] border border-slate-700 bg-slate-800">
         <Canvas>
           <Replay />
@@ -43,7 +57,9 @@ export default function Index() {
 
 function Replay() {
   const { frame, setFrame } = store();
-  useFrame(() => setFrame(frame + 1), -1);
+  useFrame(() => {
+    return setFrame(frame + 1);
+  }, -2);
 
   return (
     <>
@@ -60,11 +76,11 @@ function Replay() {
         position={[0, 0, 30]}
         zoom={1}
       />
-      <Gltf
+      {/* <Gltf
         src="/models/battlefield.glb"
         rotation={[0, -Math.PI / 2, 0]}
         scale={0.8}
-      />
+      /> */}
       <Character rotation={[0, Math.PI / 2, 0]} playerIndex={0} />
       <Character rotation={[0, Math.PI / 2, 0]} playerIndex={1} />
     </>
@@ -108,28 +124,28 @@ function Character(props: GroupProps & { playerIndex: number }) {
       }
     }
 
-    ref.current.position.set(
+    ref.current.position!.set(
       renderData.playerState.xPosition,
       renderData.playerState.yPosition,
       0,
     );
     const scale = props.playerIndex === 1 ? 0.96 : 0.97;
-    ref.current.scale.set(scale, scale, scale * renderData.facingDirection);
-  });
+    ref.current.scale!.set(scale, scale, scale * renderData.facingDirection);
+  }, -1);
 
   return <primitive {...props} object={scene} ref={ref} dispose={null} />;
 }
 
 interface Store {
   frame: number;
-  renderData: RenderData[][] | null;
   setFrame: (frame: number) => void;
+  renderData: RenderData[][] | null;
   setRenderData: (renderData: RenderData[][]) => void;
 }
 
 const store = create<Store>((set) => ({
   frame: 0,
-  renderData: null,
   setFrame: (frame: number) => set({ frame }),
+  renderData: null,
   setRenderData: (renderData: RenderData[][]) => set({ renderData }),
 }));
