@@ -1,7 +1,13 @@
-import { Gltf, OrbitControls } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import {
+  OrbitControls,
+  OrthographicCamera,
+  useAnimations,
+  useGLTF,
+} from "@react-three/drei";
+import { Canvas, GroupProps, useFrame } from "@react-three/fiber";
 import { decode } from "@shelacek/ubjson";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { SkeletonUtils } from "three-stdlib";
 import { create } from "zustand";
 
 import { parseReplay } from "~/parser";
@@ -31,64 +37,58 @@ export default function Index() {
 }
 
 function Replay() {
-  const { rotation, setRotation } = store();
+  const { position, setPosition } = store();
   useFrame(() => {
-    setRotation([rotation[0] + 0.01, rotation[1] + 0.04, rotation[2] + 0.01]);
+    setPosition([(position[0] + 0.1) % 20, position[1] + 0, position[2] + 0]);
   }, -1);
 
   return (
     <>
       <OrbitControls />
-      <ambientLight intensity={Math.PI} />
-      <spotLight
-        position={[10, 10, 10]}
-        angle={0.15}
-        penumbra={1}
-        decay={0}
-        intensity={Math.PI}
+      <OrthographicCamera
+        makeDefault
+        left={-20}
+        right={20}
+        bottom={-20}
+        top={20}
+        near={0.1}
+        far={1000}
+        position={[0, 0, 100]}
+        zoom={1}
       />
-      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      <Box position={[-1.2, 0, 0]} />
-      <Box position={[1.2, 0, 0]} />
-      <Gltf src="/models/fox.glb" />
+      <Character rotation={[Math.PI / 2, 0, 0]} />
+      <Character rotation={[0, Math.PI / 2, 0]} />
     </>
   );
 }
 
-function Box(props: any) {
-  const meshRef = useRef<JSX.IntrinsicElements["mesh"] | null>(null);
-  const [hovered, setHover] = useState(false);
-  const [active, setActive] = useState(false);
+function Character(props: GroupProps) {
+  const { scene, animations } = useGLTF("/models/fox.glb");
+  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  const ref = useRef<JSX.IntrinsicElements["group"] | null>(null);
+  const { actions } = useAnimations(animations, clone);
+
   useFrame(() => {
-    const storeRotation = store.getState().rotation;
-    meshRef.current!.rotation!.set(
-      storeRotation[0],
-      storeRotation[1],
-      storeRotation[2],
+    ref.current!.position!.set(
+      store.getState().position[0],
+      store.getState().position[1],
+      store.getState().position[2],
     );
   });
 
-  return (
-    <mesh
-      {...props}
-      ref={meshRef}
-      scale={active ? 1.5 : 1}
-      onClick={() => setActive(!active)}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
-    >
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? "hotpink" : "tomato"} />
-    </mesh>
-  );
+  useEffect(() => {
+    actions.AttackAirB.play();
+  }, [actions]);
+
+  return <primitive {...props} object={clone} ref={ref} dispose={null} />;
 }
 
 interface Store {
-  rotation: [number, number, number];
-  setRotation: (rotation: [number, number, number]) => void;
+  position: [number, number, number];
+  setPosition: (position: [number, number, number]) => void;
 }
 
 const store = create<Store>((set) => ({
-  rotation: [0, 0, 0],
-  setRotation: (rotation: [number, number, number]) => set({ rotation }),
+  position: [0, 0, 0],
+  setPosition: (position: [number, number, number]) => set({ position }),
 }));
