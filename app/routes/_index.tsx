@@ -1,5 +1,4 @@
 import {
-  Gltf,
   OrbitControls,
   OrthographicCamera,
   Stats,
@@ -11,12 +10,42 @@ import { decode } from "@shelacek/ubjson";
 import { useRef, useState } from "react";
 import { create } from "zustand";
 
-import { RenderData } from "~/common/types";
+import { PlayerSettings, RenderData, ReplayData } from "~/common/types";
 import { parseReplay } from "~/parser";
 import { renderReplay } from "~/render";
+import { actionMapByInternalId } from "~/render/characters";
+
+const modelFileByExternalId = [
+  "falcon",
+  "Donkey Kong",
+  "fox",
+  "Mr. Game & Watch",
+  "Kirby",
+  "Bowser",
+  "Link",
+  "Luigi",
+  "Mario",
+  "marth",
+  "Mewtwo",
+  "Ness",
+  "peach",
+  "Pikachu",
+  "Ice Climbers",
+  "jigglypuff",
+  "Samus",
+  "Yoshi",
+  "Zelda",
+  "sheik",
+  "falco",
+  "Young Link",
+  "Dr. Mario",
+  "Roy",
+  "Pichu",
+  "Ganondorf",
+];
 
 export default function Index() {
-  const { setRenderData, frame, setFrame } = store();
+  const { setRenderData, setReplay, frame, setFrame } = store();
 
   async function openFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -26,6 +55,7 @@ export default function Index() {
       useTypedArrays: true,
     });
     const replay = parseReplay(metadata, raw);
+    setReplay(replay);
     setRenderData(renderReplay(replay));
   }
 
@@ -39,12 +69,7 @@ export default function Index() {
         min={0}
         max={8000}
         value={frame}
-        onInput={(e) => {
-          const f = parseInt(e.currentTarget.value);
-          console.log(f);
-
-          setFrame(parseInt(e.currentTarget.value));
-        }}
+        onInput={(e) => setFrame(parseInt(e.currentTarget.value))}
       />
       <div className="size-[800px] border border-slate-700 bg-slate-800">
         <Canvas>
@@ -56,7 +81,7 @@ export default function Index() {
 }
 
 function Replay() {
-  const { frame, setFrame } = store();
+  const { frame, setFrame, replay } = store();
   useFrame(() => {
     return setFrame(frame + 1);
   }, -2);
@@ -81,15 +106,22 @@ function Replay() {
         rotation={[0, -Math.PI / 2, 0]}
         scale={0.8}
       /> */}
-      <Character rotation={[0, Math.PI / 2, 0]} playerIndex={0} />
-      <Character rotation={[0, Math.PI / 2, 0]} playerIndex={1} />
+      {replay?.settings.playerSettings
+        .filter(Boolean)
+        .map((settings) => (
+          <Character
+            key={settings.playerIndex}
+            rotation={[0, Math.PI / 2, 0]}
+            settings={settings}
+          />
+        ))}
     </>
   );
 }
 
-function Character(props: GroupProps & { playerIndex: number }) {
+function Character(props: GroupProps & { settings: PlayerSettings }) {
   const { scene, animations } = useGLTF(
-    props.playerIndex === 1 ? "/models/fox.glb" : "/models/falcon.glb",
+    `/models/${modelFileByExternalId[props.settings.externalCharacterId]}.glb`,
   );
 
   // TODO: Position already captures movement caused by animations JOBJ_1
@@ -109,12 +141,12 @@ function Character(props: GroupProps & { playerIndex: number }) {
       .getState()
       .renderData?.[
         store.getState().frame
-      ].find((r) => r.playerSettings.playerIndex === props.playerIndex);
+      ].find((r) => r.playerSettings.playerIndex === props.settings.playerIndex);
     const prevRenderData = store
       .getState()
       .renderData?.[
         store.getState().frame - 1
-      ]?.find((r) => r.playerSettings.playerIndex === props.playerIndex);
+      ]?.find((r) => r.playerSettings.playerIndex === props.settings.playerIndex);
     if (!renderData || !prevRenderData || !ref.current) return;
     if (renderData.animationName !== prevRenderData.animationName) {
       const action = actions[renderData.animationName];
@@ -129,7 +161,8 @@ function Character(props: GroupProps & { playerIndex: number }) {
       renderData.playerState.yPosition,
       0,
     );
-    const scale = props.playerIndex === 1 ? 0.96 : 0.97;
+    const scale =
+      actionMapByInternalId[renderData.playerState.internalCharacterId].scale;
     ref.current.scale!.set(scale, scale, scale * renderData.facingDirection);
   }, -1);
 
@@ -139,6 +172,8 @@ function Character(props: GroupProps & { playerIndex: number }) {
 interface Store {
   frame: number;
   setFrame: (frame: number) => void;
+  replay: ReplayData | null;
+  setReplay: (replay: ReplayData) => void;
   renderData: RenderData[][] | null;
   setRenderData: (renderData: RenderData[][]) => void;
 }
@@ -146,6 +181,8 @@ interface Store {
 const store = create<Store>((set) => ({
   frame: 0,
   setFrame: (frame: number) => set({ frame }),
+  replay: null,
+  setReplay: (replay: ReplayData) => set({ replay }),
   renderData: null,
   setRenderData: (renderData: RenderData[][]) => set({ renderData }),
 }));
