@@ -17,6 +17,7 @@
     "@remix-run/cloudflare-pages": "^2.6.0",
     "@remix-run/dev": "^2.6.0",
     "@remix-run/react": "^2.6.0",
+    "@shelacek/ubjson": "^1.1.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",

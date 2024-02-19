@@ -1,10 +1,26 @@
+import { Gltf, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
+import { decode } from "@shelacek/ubjson";
 import { useRef, useState } from "react";
 import { create } from "zustand";
 
+import { parseReplay } from "~/parser";
+
 export default function Index() {
+  async function openFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const { raw, metadata } = decode(await file.arrayBuffer(), {
+      useTypedArrays: true,
+    });
+    const replay = parseReplay(metadata, raw);
+    console.log(replay.settings);
+  }
+
   return (
     <div className="grid h-screen place-items-center bg-slate-100">
+      <input type="file" onInput={openFile} />
       <div className="aspect-square size-[500px] rounded border border-slate-300 bg-white drop-shadow">
         <Canvas>
           <Replay />
@@ -22,6 +38,7 @@ function Replay() {
 
   return (
     <>
+      <OrbitControls />
       <ambientLight intensity={Math.PI} />
       <spotLight
         position={[10, 10, 10]}
@@ -33,6 +50,7 @@ function Replay() {
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
       <Box position={[-1.2, 0, 0]} />
       <Box position={[1.2, 0, 0]} />
+      <Gltf src="/models/fox.glb" />
     </>
   );
 }
