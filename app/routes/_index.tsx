@@ -60,11 +60,11 @@ function Replay() {
         position={[0, 0, 30]}
         zoom={1}
       />
-      {/* <Gltf
+      <Gltf
         src="/models/battlefield.glb"
         rotation={[0, -Math.PI / 2, 0]}
         scale={0.8}
-      /> */}
+      />
       <Character rotation={[0, Math.PI / 2, 0]} playerIndex={0} />
       <Character rotation={[0, Math.PI / 2, 0]} playerIndex={1} />
     </>
