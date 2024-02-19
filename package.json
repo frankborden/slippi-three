@@ -5,9 +5,9 @@
   "scripts": {
     "build": "remix vite:build",
     "deploy": "wrangler pages deploy ./build/client",
-    "dev": "remix vite:dev --open",
-    "start": "wrangler pages dev ./build/client",
-    "typecheck": "tsc"
+    "dev": "remix vite:dev",
+    "format": "bun x prettier --write .",
+    "start": "wrangler pages dev ./build/client"
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
@@ -17,6 +17,7 @@
     "@remix-run/cloudflare-pages": "^2.6.0",
     "@remix-run/dev": "^2.6.0",
     "@remix-run/react": "^2.6.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@types/three": "^0.161.2",
@@ -38,5 +39,17 @@
     "vite-tsconfig-paths": "^4.3.1",
     "wrangler": "^3.28.3",
     "zustand": "^4.5.1"
+  },
+  "prettier": {
+    "plugins": [
+      "@trivago/prettier-plugin-sort-imports",
+      "prettier-plugin-tailwindcss"
+    ],
+    "importOrder": [
+      "^~/(.*)$",
+      "^[./]"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
   }
 }
