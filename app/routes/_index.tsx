@@ -7,7 +7,7 @@ import {
 } from "@react-three/drei";
 import { Canvas, GroupProps, useFrame } from "@react-three/fiber";
 import { decode } from "@shelacek/ubjson";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { create } from "zustand";
 
 import { PlayerSettings, RenderData, ReplayData } from "~/common/types";
@@ -83,7 +83,9 @@ export default function Index() {
 function Replay() {
   const { frame, setFrame, replay } = store();
   useFrame(() => {
-    return setFrame(frame + 1);
+    if (replay) {
+      setFrame(frame + 1);
+    }
   }, -2);
 
   return (
@@ -110,7 +112,7 @@ function Replay() {
         .filter(Boolean)
         .map((settings) => (
           <Character
-            key={settings.playerIndex}
+            key={settings.externalCharacterId}
             rotation={[0, Math.PI / 2, 0]}
             settings={settings}
           />
