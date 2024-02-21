@@ -1,4 +1,4 @@
-import { Gltf, OrbitControls, useAnimations, useGLTF } from "@react-three/drei";
+import { Gltf, useAnimations, useGLTF } from "@react-three/drei";
 import { Canvas, GroupProps, useFrame } from "@react-three/fiber";
 import { decode } from "@shelacek/ubjson";
 import { useRef } from "react";
@@ -98,7 +98,7 @@ export default function Index() {
         </SliderTrack>
       </Slider>
       <div className="aspect-video max-w-[40vw] rounded border border-slate-700 bg-slate-800">
-        <Canvas orthographic>
+        <Canvas orthographic camera={{ position: [0, 0, 100] }}>
           <Replay />
         </Canvas>
       </div>
@@ -147,7 +147,6 @@ function Replay() {
 
   return (
     <>
-      <OrbitControls />
       <Gltf
         src="/models/battlefield.glb"
         rotation={[0, -Math.PI / 2, 0]}
