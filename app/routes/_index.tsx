@@ -1,15 +1,7 @@
-import {
-  Gltf,
-  OrbitControls,
-  OrthographicCamera,
-  Stats,
-  useAnimations,
-  useGLTF,
-} from "@react-three/drei";
+import { Gltf, OrbitControls, useAnimations, useGLTF } from "@react-three/drei";
 import { Canvas, GroupProps, useFrame } from "@react-three/fiber";
-import { is } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { decode } from "@shelacek/ubjson";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import {
   Button,
   FileTrigger,
@@ -19,6 +11,7 @@ import {
   SliderThumb,
   SliderTrack,
 } from "react-aria-components";
+import { OrthographicCamera } from "three";
 import { create } from "zustand";
 
 import { PlayerSettings, RenderData, ReplayData } from "~/common/types";
@@ -54,6 +47,11 @@ const modelFileByExternalId = [
   "Pichu",
   "Ganondorf",
 ];
+
+function lerp(current: number, target: number) {
+  const smoothness = 0.05;
+  return current * (1 - smoothness) + target * smoothness;
+}
 
 export default function Index() {
   const { setRenderData, replay, setReplay, frame, setFrame } = store();
@@ -99,8 +97,8 @@ export default function Index() {
           )}
         </SliderTrack>
       </Slider>
-      <div className="size-[500px] border border-slate-700 bg-slate-800">
-        <Canvas>
+      <div className="aspect-video max-w-[40vw] rounded border border-slate-700 bg-slate-800">
+        <Canvas orthographic>
           <Replay />
         </Canvas>
       </div>
@@ -109,28 +107,47 @@ export default function Index() {
 }
 
 function Replay() {
-  const { frame, setFrame, replay } = store();
+  const { frame, setFrame, replay, renderData } = store();
   useFrame(() => {
     if (replay) {
       setFrame(frame + 1);
     }
   }, -2);
+  useFrame(({ camera }) => {
+    if (replay && renderData) {
+      const focusPoints = renderData[frame].map(({ playerState }) => ({
+        x: playerState.xPosition,
+        y: playerState.yPosition,
+      }));
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let minY = Infinity;
+      let maxY = -Infinity;
+      for (const { x, y } of focusPoints) {
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+      const cam = camera as OrthographicCamera;
+      const midX = (minX + maxX) / 2;
+      const midY = (minY + maxY) / 2;
+      const width = Math.max(100, maxX - minX + 20);
+      const height = Math.max(100, maxY - minY + 20);
+      const aspect = 16 / 9;
+      const targetWidth = Math.max(width, height * aspect);
+      const targetHeight = targetWidth / aspect;
+      cam.left = lerp(cam.left, midX - targetWidth / 2);
+      cam.right = lerp(cam.right, midX + targetWidth / 2);
+      cam.top = lerp(cam.top, midY + targetHeight / 2);
+      cam.bottom = lerp(cam.bottom, midY - targetHeight / 2);
+      cam.updateProjectionMatrix();
+    }
+  }, -1);
 
   return (
     <>
-      <Stats />
       <OrbitControls />
-      <OrthographicCamera
-        makeDefault
-        left={-80}
-        right={80}
-        bottom={-60}
-        top={100}
-        near={1}
-        far={60}
-        position={[0, 0, 30]}
-        zoom={1}
-      />
       <Gltf
         src="/models/battlefield.glb"
         rotation={[0, -Math.PI / 2, 0]}
