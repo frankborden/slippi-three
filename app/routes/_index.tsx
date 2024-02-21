@@ -1,4 +1,5 @@
 import {
+  Gltf,
   OrbitControls,
   OrthographicCamera,
   Stats,
@@ -6,8 +7,18 @@ import {
   useGLTF,
 } from "@react-three/drei";
 import { Canvas, GroupProps, useFrame } from "@react-three/fiber";
+import { is } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { decode } from "@shelacek/ubjson";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import {
+  Button,
+  FileTrigger,
+  Label,
+  Slider,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack,
+} from "react-aria-components";
 import { create } from "zustand";
 
 import { PlayerSettings, RenderData, ReplayData } from "~/common/types";
@@ -45,13 +56,11 @@ const modelFileByExternalId = [
 ];
 
 export default function Index() {
-  const { setRenderData, setReplay, frame, setFrame } = store();
+  const { setRenderData, replay, setReplay, frame, setFrame } = store();
 
-  async function openFile(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const { raw, metadata } = decode(await file.arrayBuffer(), {
+  async function openFile(files: FileList | null) {
+    if (!files) return;
+    const { raw, metadata } = decode(await files[0].arrayBuffer(), {
       useTypedArrays: true,
     });
     const replay = parseReplay(metadata, raw);
@@ -60,18 +69,37 @@ export default function Index() {
   }
 
   return (
-    <div className="grid h-screen place-items-center bg-slate-950 text-slate-200">
-      <input type="file" onInput={openFile} />
-      <div>{frame}</div>
-      <input
-        type="range"
-        className="w-[800px]"
-        min={0}
-        max={8000}
+    <div className="p-8">
+      <FileTrigger onSelect={openFile}>
+        <Button className="rounded bg-emerald-700 px-3 py-0.5 text-emerald-50 hover:bg-emerald-600 hover:text-white">
+          Open Replay
+        </Button>
+      </FileTrigger>
+      <Slider
         value={frame}
-        onInput={(e) => setFrame(parseInt(e.currentTarget.value))}
-      />
-      <div className="size-[800px] border border-slate-700 bg-slate-800">
+        minValue={0}
+        maxValue={replay?.frames.length ?? 10}
+        onChange={(f) => setFrame(f)}
+        className="my-4 w-[500px]"
+      >
+        <div className="flex justify-between">
+          <Label>Frame</Label>
+          <SliderOutput />
+        </div>
+        <SliderTrack className="relative h-4 w-full">
+          {({ state }) => (
+            <>
+              <div className="absolute top-1/2 h-1 w-full -translate-y-1/2 rounded-full bg-white/40" />
+              <div
+                className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-white"
+                style={{ width: `${state.getThumbPercent(0) * 100}%` }}
+              />
+              <SliderThumb className="top-1/2 h-4 w-4 rounded-full border border-slate-950 bg-white ring-black transition" />
+            </>
+          )}
+        </SliderTrack>
+      </Slider>
+      <div className="size-[500px] border border-slate-700 bg-slate-800">
         <Canvas>
           <Replay />
         </Canvas>
@@ -103,11 +131,11 @@ function Replay() {
         position={[0, 0, 30]}
         zoom={1}
       />
-      {/* <Gltf
+      <Gltf
         src="/models/battlefield.glb"
         rotation={[0, -Math.PI / 2, 0]}
         scale={0.8}
-      /> */}
+      />
       {replay?.settings.playerSettings
         .filter(Boolean)
         .map((settings) => (
