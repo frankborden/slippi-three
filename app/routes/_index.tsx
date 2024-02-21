@@ -129,7 +129,6 @@ function Replay() {
         minY = Math.min(minY, y);
         maxY = Math.max(maxY, y);
       }
-      const cam = camera as OrthographicCamera;
       const midX = (minX + maxX) / 2;
       const midY = (minY + maxY) / 2;
       const width = Math.max(100, maxX - minX + 20);
@@ -137,6 +136,7 @@ function Replay() {
       const aspect = 16 / 9;
       const targetWidth = Math.max(width, height * aspect);
       const targetHeight = targetWidth / aspect;
+      const cam = camera as OrthographicCamera;
       cam.left = lerp(cam.left, midX - targetWidth / 2);
       cam.right = lerp(cam.right, midX + targetWidth / 2);
       cam.top = lerp(cam.top, midY + targetHeight / 2);
@@ -157,7 +157,7 @@ function Replay() {
         .map((settings) => (
           <Character
             key={settings.externalCharacterId}
-            rotation={[0, Math.PI / 2, 0]}
+            rotation={[0, -Math.PI / 2, 0]}
             settings={settings}
           />
         ))}
@@ -209,7 +209,7 @@ function Character(props: GroupProps & { settings: PlayerSettings }) {
     );
     const scale =
       actionMapByInternalId[renderData.playerState.internalCharacterId].scale;
-    ref.current.scale!.set(scale, scale, scale * renderData.facingDirection);
+    ref.current.scale!.set(scale, scale, scale * -renderData.facingDirection);
   }, -1);
 
   return <primitive {...props} object={scene} ref={ref} dispose={null} />;
