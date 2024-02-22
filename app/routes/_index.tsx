@@ -93,12 +93,12 @@ export default function Index() {
                 className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-white"
                 style={{ width: `${state.getThumbPercent(0) * 100}%` }}
               />
-              <SliderThumb className="top-1/2 h-4 w-4 rounded-full border border-slate-950 bg-white ring-black transition" />
+              <SliderThumb className="top-1/2 h-4 w-4 rounded-full border border-slate-900 bg-white ring-black transition" />
             </>
           )}
         </SliderTrack>
       </Slider>
-      <div className="relative aspect-video max-w-[40vw] rounded border border-slate-700 bg-slate-800">
+      <div className="relative aspect-video max-w-[40vw] rounded border border-slate-700 bg-slate-950">
         <Canvas orthographic camera={{ position: [0, 0, 100] }}>
           <Replay />
         </Canvas>
@@ -220,7 +220,7 @@ function Character(props: GroupProps & { settings: PlayerSettings }) {
 function HUD() {
   const { replay, frame } = store();
   return (
-    <div className="absolute bottom-0 left-0 w-full text-white">
+    <div className="absolute bottom-1 left-0 w-full text-white">
       <div className="flex justify-around">
         {replay?.settings.playerSettings.map((settings, i) => (
           <div
