@@ -9,6 +9,8 @@ export interface Store {
   setReplay: (replay: ReplayData) => void;
   renderData: RenderData[][] | null;
   setRenderData: (renderData: RenderData[][]) => void;
+  paused: boolean;
+  setPaused: (paused: boolean) => void;
 }
 
 export const store = create<Store>((set) => ({
@@ -18,4 +20,6 @@ export const store = create<Store>((set) => ({
   setReplay: (replay: ReplayData) => set({ replay }),
   renderData: null,
   setRenderData: (renderData: RenderData[][]) => set({ renderData }),
+  paused: false,
+  setPaused: (paused: boolean) => set({ paused }),
 }));

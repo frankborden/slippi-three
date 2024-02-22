@@ -18,9 +18,9 @@ export function Replay() {
 }
 
 function Scene() {
-  const { frame, setFrame, replay } = store();
+  const { frame, setFrame, replay, paused } = store();
   useFrame(() => {
-    if (replay) {
+    if (replay && !paused) {
       setFrame(frame === replay.frames.length - 1 ? 0 : frame + 1);
     }
   }, -2);

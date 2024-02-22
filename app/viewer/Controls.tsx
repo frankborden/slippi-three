@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from "react";
 import {
   Label,
   Slider,
@@ -9,7 +10,32 @@ import {
 import { store } from "~/viewer/store";
 
 export function Controls() {
-  const { replay, frame, setFrame } = store();
+  const { replay, frame, setFrame, paused, setPaused } = store();
+
+  function handleKeyPress(event: KeyboardEvent) {
+    switch (event.key) {
+      case "ArrowLeft":
+      case "j":
+        setFrame(Math.max(frame - 120, 0));
+        break;
+      case "ArrowRight":
+      case "l":
+        setFrame(Math.min(frame + 120, replay?.frames.length ?? 1));
+        break;
+      case " ":
+      case "k":
+        setPaused(!paused);
+        break;
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   return (
     <Slider
       value={frame}
