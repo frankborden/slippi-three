@@ -14,6 +14,7 @@ import {
 import { OrthographicCamera } from "three";
 import { create } from "zustand";
 
+import { charactersExt } from "~/common/names";
 import { PlayerSettings, RenderData, ReplayData } from "~/common/types";
 import { parseReplay } from "~/parser";
 import { renderReplay } from "~/render";
@@ -97,10 +98,11 @@ export default function Index() {
           )}
         </SliderTrack>
       </Slider>
-      <div className="aspect-video max-w-[40vw] rounded border border-slate-700 bg-slate-800">
+      <div className="relative aspect-video max-w-[40vw] rounded border border-slate-700 bg-slate-800">
         <Canvas orthographic camera={{ position: [0, 0, 100] }}>
           <Replay />
         </Canvas>
+        <HUD />
       </div>
     </div>
   );
@@ -109,7 +111,7 @@ export default function Index() {
 function Replay() {
   const { frame, setFrame, replay, renderData } = store();
   useFrame(() => {
-    if (replay) {
+    if (replay && frame < replay.frames.length - 1) {
       setFrame(frame + 1);
     }
   }, -2);
@@ -213,6 +215,43 @@ function Character(props: GroupProps & { settings: PlayerSettings }) {
   }, -1);
 
   return <primitive {...props} object={scene} ref={ref} dispose={null} />;
+}
+
+function HUD() {
+  const { replay, frame } = store();
+  return (
+    <div className="absolute bottom-0 left-0 w-full text-white">
+      <div className="flex justify-around">
+        {replay?.settings.playerSettings.map((settings, i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center"
+            style={{
+              WebkitTextStroke: "0.1px black",
+            }}
+          >
+            <div className="flex">
+              {[
+                ...Array(
+                  replay.frames[frame].players[i].state.stocksRemaining,
+                ).keys(),
+              ].map((i) => (
+                <img
+                  key={i}
+                  src={`/stockicons/${settings.externalCharacterId}/0.png`}
+                  className="size-4"
+                />
+              ))}
+            </div>
+            <div>
+              {Math.round(replay.frames[frame].players[i].state.percent)}%
+            </div>
+            <div>{settings.connectCode}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 interface Store {
