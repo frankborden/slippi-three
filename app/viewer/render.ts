@@ -6,7 +6,7 @@ import type {
   RenderData,
   ReplayData,
 } from "~/common/types";
-import { actionMapByInternalId } from "~/render/characters";
+import { actionMapByInternalId } from "~/viewer/characters";
 
 export function renderReplay(replay: ReplayData): RenderData[][] {
   return replay.frames.map((frame) =>
