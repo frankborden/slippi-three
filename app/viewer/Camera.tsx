@@ -41,5 +41,5 @@ export function Camera() {
 
 function lerp(current: number, target: number) {
   const smoothness = 0.05;
-  return current * (1 - smoothness) + target * smoothness;
+  return current + (target - current) * smoothness;
 }
