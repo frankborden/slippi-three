@@ -1,6 +1,5 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { GroupProps, useFrame } from "@react-three/fiber";
-import { M } from "node_modules/vite/dist/node/types.d-jgA8ss1A";
 import { useRef } from "react";
 
 import { PlayerSettings } from "~/common/types";
@@ -36,12 +35,11 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
         store.getState().frame - 1
       ]?.find((r) => r.playerSettings.playerIndex === props.settings.playerIndex);
     if (!renderData || !prevRenderData || !ref.current) return;
-    if (renderData.animationName !== prevRenderData.animationName) {
-      const action = actions[renderData.animationName];
-      if (action) {
-        mixer.stopAllAction();
-        action.play();
-      }
+    const action = actions[renderData.animationName];
+    if (action) {
+      mixer.stopAllAction();
+      action.play();
+      mixer.setTime(renderData.animationFrame / 60);
     }
 
     ref.current.position!.set(
@@ -49,6 +47,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
       renderData.playerState.yPosition,
       0,
     );
+
     let angle = 0;
     if (renderData.animationName === "DamageFlyRoll") {
       const xSpeed =
