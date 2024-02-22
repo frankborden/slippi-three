@@ -1,6 +1,7 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { GroupProps, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
+import { Euler, type Vector3 } from "three";
 
 import { PlayerSettings } from "~/common/types";
 import { actionMapByInternalId } from "~/viewer/characters";
@@ -42,7 +43,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
       mixer.setTime(renderData.animationFrame / 60);
     }
 
-    ref.current.position!.set(
+    (ref.current.position! as Vector3).set(
       renderData.playerState.xPosition,
       renderData.playerState.yPosition,
       0,
@@ -73,12 +74,16 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
           ? Math.atan2(ySpeed, xSpeed)
           : Math.atan2(ySpeed, xSpeed) - Math.PI;
     }
-    ref.current.rotation!.reorder("YXZ");
-    ref.current.rotation!.set(angle, -Math.PI / 2, 0);
+    (ref.current.rotation! as Euler).reorder("YXZ");
+    (ref.current.rotation! as Euler).set(angle, -Math.PI / 2, 0);
 
     const scale =
       actionMapByInternalId[renderData.playerState.internalCharacterId].scale;
-    ref.current.scale!.set(scale, scale, scale * -renderData.facingDirection);
+    (ref.current.scale! as Vector3).set(
+      scale,
+      scale,
+      scale * -renderData.facingDirection,
+    );
   }, -1);
 
   return <primitive {...props} object={scene} ref={ref} dispose={null} />;
