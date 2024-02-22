@@ -111,8 +111,8 @@ export default function Index() {
 function Replay() {
   const { frame, setFrame, replay, renderData } = store();
   useFrame(() => {
-    if (replay && frame < replay.frames.length - 1) {
-      setFrame(frame + 1);
+    if (replay) {
+      setFrame(frame === replay.frames.length - 1 ? 0 : frame + 1);
     }
   }, -2);
   useFrame(({ camera }) => {
