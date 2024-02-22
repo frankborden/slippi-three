@@ -209,6 +209,19 @@ function Character(props: GroupProps & { settings: PlayerSettings }) {
       renderData.playerState.yPosition,
       0,
     );
+    if (renderData.animationName === "DamageFlyRoll") {
+      const xSpeed =
+        renderData.playerState.selfInducedAirXSpeed +
+        renderData.playerState.attackBasedXSpeed;
+      const ySpeed =
+        renderData.playerState.selfInducedAirYSpeed +
+        renderData.playerState.attackBasedYSpeed;
+      const angle = Math.atan2(ySpeed, xSpeed) - Math.PI / 2;
+      ref.current.rotation.reorder("YXZ");
+      ref.current.rotation.set(angle, -Math.PI / 2, 0);
+    } else {
+      ref.current.rotation.set(0, -Math.PI / 2, 0);
+    }
     const scale =
       actionMapByInternalId[renderData.playerState.internalCharacterId].scale;
     ref.current.scale!.set(scale, scale, scale * -renderData.facingDirection);
