@@ -1,5 +1,6 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { GroupProps, useFrame } from "@react-three/fiber";
+import { M } from "node_modules/vite/dist/node/types.d-jgA8ss1A";
 import { useRef } from "react";
 
 import { PlayerSettings } from "~/common/types";
@@ -48,6 +49,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
       renderData.playerState.yPosition,
       0,
     );
+    let angle = 0;
     if (renderData.animationName === "DamageFlyRoll") {
       const xSpeed =
         renderData.playerState.selfInducedAirXSpeed +
@@ -55,12 +57,27 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
       const ySpeed =
         renderData.playerState.selfInducedAirYSpeed +
         renderData.playerState.attackBasedYSpeed;
-      const angle = Math.atan2(ySpeed, xSpeed) - Math.PI / 2;
-      ref.current.rotation!.reorder("YXZ");
-      ref.current.rotation!.set(angle, -Math.PI / 2, 0);
-    } else {
-      ref.current.rotation!.set(0, -Math.PI / 2, 0);
+      angle = Math.atan2(ySpeed, xSpeed) - Math.PI / 2;
     }
+    if (
+      (renderData.playerSettings.externalCharacterId === 2 ||
+        renderData.playerSettings.externalCharacterId === 20) &&
+      renderData.animationName === "SpecialHi"
+    ) {
+      const xSpeed =
+        renderData.playerState.selfInducedAirXSpeed +
+        renderData.playerState.attackBasedXSpeed;
+      const ySpeed =
+        renderData.playerState.selfInducedAirYSpeed +
+        renderData.playerState.attackBasedYSpeed;
+      angle =
+        renderData.facingDirection === 1
+          ? Math.atan2(ySpeed, xSpeed)
+          : Math.atan2(ySpeed, xSpeed) - Math.PI;
+    }
+    ref.current.rotation!.reorder("YXZ");
+    ref.current.rotation!.set(angle, -Math.PI / 2, 0);
+
     const scale =
       actionMapByInternalId[renderData.playerState.internalCharacterId].scale;
     ref.current.scale!.set(scale, scale, scale * -renderData.facingDirection);
