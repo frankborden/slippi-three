@@ -58,8 +58,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
         renderData.playerState.selfInducedAirYSpeed +
         renderData.playerState.attackBasedYSpeed;
       angle = Math.atan2(ySpeed, xSpeed) - Math.PI / 2;
-    }
-    if (
+    } else if (
       (renderData.playerSettings.externalCharacterId === 2 ||
         renderData.playerSettings.externalCharacterId === 20) &&
       renderData.animationName === "SpecialHi"
