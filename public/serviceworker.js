@@ -6,16 +6,19 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(clients.claim());
 });
 
-self.addEventListener("fetch", async (event) => {
+self.addEventListener("fetch", (event) => {
   if (event.request.url.includes("/models/")) {
-    const cache = await caches.open("model");
-    const cachedResponse = await cache.match(event.request);
-    if (cachedResponse) {
-      event.respondWith(cachedResponse);
-      return;
-    }
-    const response = await fetch(event.request);
-    cache.put(event.request, response.clone());
-    event.respondWith(response);
+    event.respondWith(useCache(event.request));
   }
 });
+
+async function useCache(request) {
+  const cache = await caches.open("models");
+  const cachedResponse = await cache.match(request);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+  const response = await fetch(request);
+  cache.put(request, response.clone());
+  return response;
+}
