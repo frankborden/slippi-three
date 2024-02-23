@@ -7,19 +7,21 @@ export function HUD() {
       <div className="absolute left-0 top-1 flex w-full justify-center text-white">
         {timer(frame)}
       </div>
-      <div className="absolute bottom-1 left-0 flex w-full justify-around text-white">
-        {replay?.settings.playerSettings.map((settings, i) => (
+      <div className="absolute bottom-1 left-0 grid w-full grid-cols-4 text-white">
+        {replay?.settings.playerSettings.map((settings) => (
           <div
-            key={i}
+            key={settings.playerIndex}
             className="flex flex-col items-center"
             style={{
+              gridColumnStart: settings.playerIndex + 1,
               WebkitTextStroke: "0.1px black",
             }}
           >
             <div className="flex">
               {[
                 ...Array(
-                  replay.frames[frame].players[i].state.stocksRemaining,
+                  replay.frames[frame].players[settings.playerIndex].state
+                    .stocksRemaining,
                 ).keys(),
               ].map((i) => (
                 <img
@@ -29,8 +31,19 @@ export function HUD() {
                 />
               ))}
             </div>
-            <div className="text-lg font-bold">
-              {Math.round(replay.frames[frame].players[i].state.percent)}%
+            <div
+              className="text-lg font-bold"
+              style={{
+                color: ["#ffbbbb", "#bbbbff", "#ffffbb", "#bbffbb"][
+                  settings.playerIndex
+                ],
+              }}
+            >
+              {Math.round(
+                replay.frames[frame].players[settings.playerIndex].state
+                  .percent,
+              )}
+              %
             </div>
             <div className="text-sm">{settings.connectCode}</div>
           </div>

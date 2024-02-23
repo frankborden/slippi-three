@@ -44,7 +44,7 @@ export function Character(
             color = 0xbbbbff;
             break;
           case 2:
-            color = 0xbbffff;
+            color = 0xffffbb;
             break;
           case 3:
             color = 0xbbffbb;
