@@ -9,7 +9,7 @@ import { store } from "~/viewer/store";
 
 export function Character(props: GroupProps & { settings: PlayerSettings }) {
   const { scene, animations } = useGLTF(
-    `/models/${modelFileByExternalId[props.settings.externalCharacterId]}.glb`,
+    `/models/${modelFileByExternalId[props.settings.externalCharacterId]}.glb?playerIndex=${props.settings.playerIndex}`,
   );
 
   useEffect(() => {
