@@ -18,8 +18,9 @@ export function Replay() {
 }
 
 function Scene() {
-  const { frame, setFrame, replay, paused } = store();
+  const { replay } = store();
   useFrame(() => {
+    const { frame, setFrame, paused } = store.getState();
     if (replay && !paused) {
       setFrame(frame === replay.frames.length - 1 ? 0 : frame + 1);
     }
@@ -35,11 +36,7 @@ function Scene() {
       {replay?.settings.playerSettings
         .filter(Boolean)
         .map((settings) => (
-          <Character
-            key={settings.externalCharacterId}
-            rotation={[0, -Math.PI / 2, 0]}
-            settings={settings}
-          />
+          <Character key={settings.externalCharacterId} settings={settings} />
         ))}
     </>
   );

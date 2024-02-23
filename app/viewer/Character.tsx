@@ -75,15 +75,15 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
           : Math.atan2(ySpeed, xSpeed) - Math.PI;
     }
     (ref.current.rotation! as Euler).reorder("YXZ");
-    (ref.current.rotation! as Euler).set(angle, -Math.PI / 2, 0);
+    (ref.current.rotation! as Euler).set(
+      angle,
+      (renderData.facingDirection * Math.PI) / 2,
+      0,
+    );
 
     const scale =
       actionMapByInternalId[renderData.playerState.internalCharacterId].scale;
-    (ref.current.scale! as Vector3).set(
-      scale,
-      scale,
-      scale * -renderData.facingDirection,
-    );
+    (ref.current.scale! as Vector3).setScalar(scale);
   }, -1);
 
   return <primitive {...props} object={scene} ref={ref} dispose={null} />;

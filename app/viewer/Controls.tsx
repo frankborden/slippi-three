@@ -26,6 +26,19 @@ export function Controls() {
       case "k":
         setPaused(!paused);
         break;
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        const num = parseInt(event.key);
+        setFrame(Math.round((replay?.frames.length ?? 0) * (num / 10)));
+        break;
     }
   }
 
