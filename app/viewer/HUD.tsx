@@ -32,20 +32,22 @@ export function HUD() {
               ))}
             </div>
             <div
-              className="text-lg font-bold"
+              className="grid grid-cols-[1fr_auto_1fr] items-baseline font-bold"
               style={{
                 color: ["#ffbbbb", "#bbbbff", "#ffffbb", "#bbffbb"][
                   settings.playerIndex
                 ],
               }}
             >
-              {Math.round(
-                replay.frames[frame].players[settings.playerIndex].state
-                  .percent,
-              )}
-              %
+              <div className="col-start-2 text-lg">
+                {Math.round(
+                  replay.frames[frame].players[settings.playerIndex].state
+                    .percent,
+                )}
+              </div>
+              <div className="col-start-3 text-base">%</div>
             </div>
-            <div className="text-sm">{settings.connectCode}</div>
+            <div className="text-sm">{settings.displayName}</div>
           </div>
         ))}
       </div>
