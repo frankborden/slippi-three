@@ -40,10 +40,13 @@ export function HUD() {
               }}
             >
               <div className="col-start-2 text-lg">
-                {Math.round(
-                  replay.frames[frame].players[settings.playerIndex].state
-                    .percent,
-                )}
+                {replay.frames[frame].players[settings.playerIndex].state
+                  .actionStateId <= 10 // Dead.*
+                  ? 0
+                  : Math.round(
+                      replay.frames[frame].players[settings.playerIndex].state
+                        .percent,
+                    )}
               </div>
               <div className="col-start-3 text-base">%</div>
             </div>
