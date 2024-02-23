@@ -25,14 +25,39 @@ function Scene() {
       setFrame(frame === replay.frames.length - 1 ? 0 : frame + 1);
     }
   }, -2);
+  let stageSrc = "/models/battlefield.glb";
+  let stageScale = 0.8;
+  switch (replay?.settings.stageId) {
+    case 2:
+      stageSrc = "/models/fountainofdreams.glb";
+      stageScale = 1;
+      break;
+    case 3:
+      stageSrc = "/models/pokemonstadium.glb";
+      stageScale = 1.25;
+      break;
+    case 8:
+      stageSrc = "/models/yoshisstory.glb";
+      stageScale = 1;
+      break;
+    case 28:
+      stageSrc = "/models/dreamland.glb";
+      stageScale = 1;
+      break;
+    case 31:
+      stageSrc = "/models/battlefield.glb";
+      stageScale = 0.8;
+      break;
+    case 32:
+      stageSrc = "/models/finaldestination.glb";
+      stageScale = 1;
+      break;
+  }
+
   return (
     <>
       <Camera />
-      <Gltf
-        src="/models/battlefield.glb"
-        rotation={[0, -Math.PI / 2, 0]}
-        scale={0.8}
-      />
+      <Gltf src={stageSrc} rotation={[0, -Math.PI / 2, 0]} scale={stageScale} />
       {replay?.settings.playerSettings
         .filter(Boolean)
         .map((settings) => (
