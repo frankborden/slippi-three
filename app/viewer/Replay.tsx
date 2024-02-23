@@ -53,6 +53,13 @@ function Scene() {
       stageScale = 1;
       break;
   }
+  const characterIds =
+    replay?.settings.playerSettings
+      .filter(Boolean)
+      .map((settings) => settings.externalCharacterId) ?? [];
+  const duplicateCharacter = characterIds.some(
+    (id, index) => characterIds.indexOf(id) !== index,
+  );
 
   return (
     <>
@@ -61,7 +68,11 @@ function Scene() {
       {replay?.settings.playerSettings
         .filter(Boolean)
         .map((settings) => (
-          <Character key={settings.externalCharacterId} settings={settings} />
+          <Character
+            key={settings.externalCharacterId}
+            settings={settings}
+            tint={duplicateCharacter}
+          />
         ))}
     </>
   );

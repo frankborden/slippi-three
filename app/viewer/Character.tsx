@@ -7,7 +7,9 @@ import { PlayerSettings } from "~/common/types";
 import { actionMapByInternalId } from "~/viewer/characters";
 import { store } from "~/viewer/store";
 
-export function Character(props: GroupProps & { settings: PlayerSettings }) {
+export function Character(
+  props: GroupProps & { settings: PlayerSettings; tint: boolean },
+) {
   const { scene, animations } = useGLTF(
     `/models/${modelFileByExternalId[props.settings.externalCharacterId]}.glb?playerIndex=${props.settings.playerIndex}`,
   );
@@ -25,6 +27,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
 
   useEffect(() => {
     scene.traverse((obj) => {
+      if (!props.tint) return;
       if ("isMesh" in obj && obj.isMesh) {
         let color = 0xffffff;
         switch (props.settings.playerIndex) {
@@ -44,7 +47,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
         ((obj as SkinnedMesh).material as MeshBasicMaterial).color.set(color);
       }
     });
-  }, [scene, props.settings]);
+  }, [scene, props.settings, props.tint]);
 
   const ref = useRef<JSX.IntrinsicElements["group"] | null>(null);
   const { mixer, actions } = useAnimations(animations, scene);
