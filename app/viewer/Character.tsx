@@ -12,14 +12,16 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
     `/models/${modelFileByExternalId[props.settings.externalCharacterId]}.glb`,
   );
 
-  // TODO: Position already captures movement caused by animations JOBJ_1
-  // and JOBJ_0 keyframes should be cleared in Blender.
-  animations.forEach((animation) => {
-    animation.tracks = animation.tracks.filter(
-      (track) =>
-        track.name !== "JOBJ_0.position" && track.name !== "JOBJ_1.position",
-    );
-  });
+  useEffect(() => {
+    // TODO: Position already captures movement caused by animations JOBJ_1
+    // and JOBJ_0 keyframes should be cleared in Blender.
+    animations.forEach((animation) => {
+      animation.tracks = animation.tracks.filter(
+        (track) =>
+          track.name !== "JOBJ_0.position" && track.name !== "JOBJ_1.position",
+      );
+    });
+  }, [animations]);
 
   useEffect(() => {
     scene.traverse((obj) => {
@@ -109,11 +111,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
     (ref.current.scale! as Vector3).setScalar(scale);
   }, -1);
 
-  return (
-    <group>
-      <primitive {...props} object={scene} ref={ref} dispose={null} />
-    </group>
-  );
+  return <primitive {...props} object={scene} ref={ref} dispose={null} />;
 }
 
 const modelFileByExternalId = [
