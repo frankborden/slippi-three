@@ -8,6 +8,10 @@ import {
 
 import "~/root.css";
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/serviceworker.js");
+}
+
 export default function App() {
   return (
     <html lang="en">
