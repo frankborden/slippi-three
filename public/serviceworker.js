@@ -11,10 +11,10 @@ self.addEventListener("fetch", async (event) => {
     const cache = await caches.open("model");
     const cachedResponse = await cache.match(event.request);
     if (cachedResponse) {
-      return cachedResponse;
+      event.respondWith(cachedResponse);
     }
     const response = await fetch(event.request);
     cache.put(event.request, response.clone());
-    return response;
+    event.respondWith(response);
   }
 });
