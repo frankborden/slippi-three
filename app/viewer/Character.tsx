@@ -1,6 +1,6 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { GroupProps, useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Euler, type Vector3 } from "three";
 
 import { PlayerSettings } from "~/common/types";
@@ -20,6 +20,29 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
         track.name !== "JOBJ_0.position" && track.name !== "JOBJ_1.position",
     );
   });
+
+  useEffect(() => {
+    scene.traverse((obj) => {
+      if (obj.isMesh) {
+        let color = 0xffffff;
+        switch (props.settings.playerIndex) {
+          case 0:
+            color = 0xffbbbb;
+            break;
+          case 1:
+            color = 0xbbbbff;
+            break;
+          case 2:
+            color = 0xbbffff;
+            break;
+          case 3:
+            color = 0xbbffbb;
+            break;
+        }
+        obj.material.color.set(color);
+      }
+    });
+  }, [scene, props.settings]);
 
   const ref = useRef<JSX.IntrinsicElements["group"] | null>(null);
   const { mixer, actions } = useAnimations(animations, scene);
@@ -86,7 +109,11 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
     (ref.current.scale! as Vector3).setScalar(scale);
   }, -1);
 
-  return <primitive {...props} object={scene} ref={ref} dispose={null} />;
+  return (
+    <group>
+      <primitive {...props} object={scene} ref={ref} dispose={null} />
+    </group>
+  );
 }
 
 const modelFileByExternalId = [
