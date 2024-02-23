@@ -10,8 +10,14 @@ import { store } from "~/viewer/store";
 export function Character(
   props: GroupProps & { settings: PlayerSettings; tint: boolean },
 ) {
+  // Junk is appended to the URL to prevent three.js from remounting the same
+  // model in dittos and breaking everything. The loader manager must later
+  // remove the junk to get back caching.
   const { scene, animations } = useGLTF(
     `/models/${modelFileByExternalId[props.settings.externalCharacterId]}.glb?playerIndex=${props.settings.playerIndex}`,
+    undefined,
+    undefined,
+    (loader) => loader.manager.setURLModifier((url) => url.split("?")[0]),
   );
 
   useEffect(() => {
