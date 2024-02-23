@@ -1,7 +1,7 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { GroupProps, useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
-import { Euler, type Vector3 } from "three";
+import { Euler, MeshBasicMaterial, SkinnedMesh, type Vector3 } from "three";
 
 import { PlayerSettings } from "~/common/types";
 import { actionMapByInternalId } from "~/viewer/characters";
@@ -25,7 +25,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
 
   useEffect(() => {
     scene.traverse((obj) => {
-      if (obj.isMesh) {
+      if ("isMesh" in obj && obj.isMesh) {
         let color = 0xffffff;
         switch (props.settings.playerIndex) {
           case 0:
@@ -41,7 +41,7 @@ export function Character(props: GroupProps & { settings: PlayerSettings }) {
             color = 0xbbffbb;
             break;
         }
-        obj.material.color.set(color);
+        ((obj as SkinnedMesh).material as MeshBasicMaterial).color.set(color);
       }
     });
   }, [scene, props.settings]);
