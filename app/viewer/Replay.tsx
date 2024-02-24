@@ -4,11 +4,12 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Camera } from "~/viewer/Camera";
 import { Character } from "~/viewer/Character";
 import { HUD } from "~/viewer/HUD";
+import { Stage } from "~/viewer/Stage";
 import { store } from "~/viewer/store";
 
 export function Replay() {
   return (
-    <div className="relative aspect-video max-w-[40vw] rounded border border-slate-700 bg-slate-950">
+    <div className="relative aspect-video max-w-[80vw] rounded border border-slate-700 bg-slate-950">
       <Canvas orthographic camera={{ position: [0, 0, 100] }}>
         <Scene />
       </Canvas>
@@ -25,34 +26,6 @@ function Scene() {
       setFrame(frame === replay.frames.length - 1 ? 0 : frame + 1);
     }
   }, -2);
-  let stageSrc = "/models/battlefield.glb";
-  let stageScale = 0.8;
-  switch (replay?.settings.stageId) {
-    case 2:
-      stageSrc = "/models/fountainofdreams.glb";
-      stageScale = 1;
-      break;
-    case 3:
-      stageSrc = "/models/pokemonstadium.glb";
-      stageScale = 1.25;
-      break;
-    case 8:
-      stageSrc = "/models/yoshisstory.glb";
-      stageScale = 1;
-      break;
-    case 28:
-      stageSrc = "/models/dreamland.glb";
-      stageScale = 1;
-      break;
-    case 31:
-      stageSrc = "/models/battlefield.glb";
-      stageScale = 0.8;
-      break;
-    case 32:
-      stageSrc = "/models/finaldestination.glb";
-      stageScale = 1;
-      break;
-  }
   const characterIds =
     replay?.settings.playerSettings
       .filter(Boolean)
@@ -64,7 +37,7 @@ function Scene() {
   return (
     <>
       <Camera />
-      <Gltf src={stageSrc} rotation={[0, -Math.PI / 2, 0]} scale={stageScale} />
+      <Stage />
       {replay?.settings.playerSettings
         .filter(Boolean)
         .map((settings) => (

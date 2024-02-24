@@ -26,7 +26,7 @@ export function Camera() {
       const midX = (minX + maxX) / 2;
       const midY = (minY + maxY) / 2;
       const width = Math.max(100, maxX - minX + 20);
-      const height = Math.max(100, maxY - minY + 20);
+      const height = Math.max(120, maxY - minY + 20);
       const aspect = 16 / 9;
       const targetWidth = Math.max(width, height * aspect);
       const targetHeight = targetWidth / aspect;
