@@ -1,5 +1,5 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
-import { GroupProps, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import { Euler, MeshBasicMaterial, SkinnedMesh, type Vector3 } from "three";
 
@@ -7,14 +7,18 @@ import { PlayerSettings } from "~/common/types";
 import { actionMapByInternalId } from "~/viewer/characters";
 import { store } from "~/viewer/store";
 
-export function Character(
-  props: GroupProps & { settings: PlayerSettings; tint: boolean },
-) {
+export function Character({
+  settings,
+  tint,
+}: {
+  settings: PlayerSettings;
+  tint: boolean;
+}) {
   // Junk is appended to the URL to prevent three.js from remounting the same
   // model in dittos and breaking everything. The loader manager must later
   // remove the junk to get back caching.
   const { scene, animations } = useGLTF(
-    `/models/${modelFileByExternalId[props.settings.externalCharacterId]}.glb?playerIndex=${props.settings.playerIndex}`,
+    `/models/${modelFileByExternalId[settings.externalCharacterId]}.glb?playerIndex=${settings.playerIndex}`,
     undefined,
     undefined,
     (loader) => loader.manager.setURLModifier((url) => url.split("?")[0]),
@@ -33,10 +37,10 @@ export function Character(
 
   useEffect(() => {
     scene.traverse((obj) => {
-      if (!props.tint) return;
+      if (!tint) return;
       if ("isMesh" in obj && obj.isMesh) {
         let color = 0xffffff;
-        switch (props.settings.playerIndex) {
+        switch (settings.playerIndex) {
           case 0:
             color = 0xffbbbb;
             break;
@@ -53,7 +57,7 @@ export function Character(
         ((obj as SkinnedMesh).material as MeshBasicMaterial).color.set(color);
       }
     });
-  }, [scene, props.settings, props.tint]);
+  }, [scene, settings, tint]);
 
   const ref = useRef<JSX.IntrinsicElements["group"] | null>(null);
   const { mixer, actions } = useAnimations(animations, scene);
@@ -63,12 +67,12 @@ export function Character(
       .getState()
       .renderData?.[
         store.getState().frame
-      ].find((r) => r.playerSettings.playerIndex === props.settings.playerIndex);
+      ].find((r) => r.playerSettings.playerIndex === settings.playerIndex);
     const prevRenderData = store
       .getState()
       .renderData?.[
         store.getState().frame - 1
-      ]?.find((r) => r.playerSettings.playerIndex === props.settings.playerIndex);
+      ]?.find((r) => r.playerSettings.playerIndex === settings.playerIndex);
     if (!renderData || !prevRenderData || !ref.current) return;
     const action = actions[renderData.animationName];
     if (action) {
@@ -120,7 +124,7 @@ export function Character(
     (ref.current.scale! as Vector3).setScalar(scale);
   }, -1);
 
-  return <primitive {...props} object={scene} ref={ref} dispose={null} />;
+  return <primitive object={scene} ref={ref} dispose={null} />;
 }
 
 const modelFileByExternalId = [
