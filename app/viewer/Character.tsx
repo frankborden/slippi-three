@@ -1,4 +1,4 @@
-import { useAnimations, useGLTF } from "@react-three/drei";
+import { Sphere, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import { Euler, MeshBasicMaterial, SkinnedMesh, type Vector3 } from "three";
@@ -59,7 +59,8 @@ export function Character({
     });
   }, [scene, settings, tint]);
 
-  const ref = useRef<JSX.IntrinsicElements["group"] | null>(null);
+  const character = useRef<JSX.IntrinsicElements["group"] | null>(null);
+  const shield = useRef<typeof Sphere | null>(null);
   const { mixer, actions } = useAnimations(animations, scene);
 
   useFrame(() => {
@@ -73,7 +74,7 @@ export function Character({
       .renderData?.[
         store.getState().frame - 1
       ]?.find((r) => r.playerSettings.playerIndex === settings.playerIndex);
-    if (!renderData || !prevRenderData || !ref.current) return;
+    if (!renderData || !prevRenderData || !character.current) return;
     const action = actions[renderData.animationName];
     if (action) {
       mixer.stopAllAction();
@@ -81,7 +82,7 @@ export function Character({
       mixer.setTime(renderData.animationFrame / 60);
     }
 
-    (ref.current.position! as Vector3).set(
+    (character.current.position! as Vector3).set(
       renderData.playerState.xPosition,
       renderData.playerState.yPosition,
       0,
@@ -112,19 +113,37 @@ export function Character({
           ? Math.atan2(ySpeed, xSpeed)
           : Math.atan2(ySpeed, xSpeed) - Math.PI;
     }
-    (ref.current.rotation! as Euler).reorder("YXZ");
-    (ref.current.rotation! as Euler).set(
+    (character.current.rotation! as Euler).reorder("YXZ");
+    (character.current.rotation! as Euler).set(
       angle,
       (renderData.facingDirection * Math.PI) / 2,
       0,
     );
 
-    const scale =
-      actionMapByInternalId[renderData.playerState.internalCharacterId].scale;
-    (ref.current.scale! as Vector3).setScalar(scale);
+    const characterData =
+      actionMapByInternalId[renderData.playerState.internalCharacterId];
+    (character.current.scale! as Vector3).setScalar(characterData.scale);
+    character.current.traverse?.((obj) => {
+      if (obj.name === `JOBJ_${characterData.shieldBone}`) {
+        obj.getWorldPosition(shield.current!.position);
+        shield.current!.scale.setScalar(characterData.shieldSize);
+      }
+      shield.current!.visible = renderData.animationName === "Guard";
+    });
   }, -1);
 
-  return <primitive object={scene} ref={ref} dispose={null} />;
+  return (
+    <>
+      <primitive object={scene} ref={character} dispose={null} />
+      <Sphere ref={shield} scale={10}>
+        <meshBasicMaterial
+          color={[0xff4444, 0x4444ff, 0xffff44, 0x44ff44][settings.playerIndex]}
+          transparent
+          opacity={0.6}
+        />
+      </Sphere>
+    </>
+  );
 }
 
 const modelFileByExternalId = [
