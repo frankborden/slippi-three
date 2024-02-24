@@ -20,7 +20,7 @@ export function Controls() {
         break;
       case "ArrowRight":
       case "l":
-        setFrame(Math.min(frame + 120, replay?.frames.length ?? 1));
+        setFrame(Math.min(frame + 120, (replay?.frames.length ?? 1) - 1));
         break;
       case " ":
       case "k":
@@ -30,7 +30,7 @@ export function Controls() {
         setFrame(Math.max(0, frame - 1));
         break;
       case ".":
-        setFrame(Math.min(replay?.frames.length ?? 1, frame + 1));
+        setFrame(Math.min((replay?.frames.length ?? 1) - 1, frame + 1));
         break;
       case "0":
       case "1":

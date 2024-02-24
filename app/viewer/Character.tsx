@@ -103,7 +103,8 @@ export function Character({
       const ySpeed =
         renderData.playerState.selfInducedAirYSpeed +
         renderData.playerState.attackBasedYSpeed;
-      angle = Math.atan2(ySpeed, xSpeed) - Math.PI / 2;
+      angle =
+        Math.atan2(ySpeed, -renderData.facingDirection * xSpeed) - Math.PI / 2;
     } else if (
       (renderData.playerSettings.externalCharacterId === 2 ||
         renderData.playerSettings.externalCharacterId === 20) &&
@@ -116,14 +117,13 @@ export function Character({
         renderData.playerState.selfInducedAirYSpeed +
         renderData.playerState.attackBasedYSpeed;
       angle =
-        renderData.facingDirection === 1
-          ? Math.atan2(ySpeed, xSpeed)
-          : Math.atan2(ySpeed, xSpeed) - Math.PI;
+        -renderData.facingDirection * Math.atan2(ySpeed, xSpeed) -
+        (renderData.facingDirection === 1 ? 0 : Math.PI);
     }
     (character.current.rotation! as Euler).reorder("YXZ");
     (character.current.rotation! as Euler).set(
       angle,
-      (renderData.facingDirection * Math.PI) / 2,
+      renderData.facingDirection * (Math.PI / 2),
       0,
     );
 
