@@ -1,4 +1,4 @@
-import { Sphere, useAnimations, useGLTF } from "@react-three/drei";
+import { Circle, Sphere, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import {
@@ -67,6 +67,7 @@ export function Character({
 
   const character = useRef<JSX.IntrinsicElements["group"] | null>(null);
   const shield = useRef<Mesh | null>(null);
+  const shine = useRef<Mesh | null>(null);
   const { mixer, actions } = useAnimations(animations, scene);
 
   useFrame(() => {
@@ -145,8 +146,26 @@ export function Character({
           const shieldSizeMultiplier =
             ((shieldHealth * triggerStrengthMultiplier) / 60) * 0.85 + 0.15;
           obj.getWorldPosition(shield.current!.position);
+          shield.current!.position.setZ(10);
           shield.current!.scale.setScalar(
             characterData.shieldSize * shieldSizeMultiplier,
+          );
+        }
+      });
+    }
+    shine.current!.visible =
+      (renderData.playerSettings.externalCharacterId === 2 ||
+        renderData.playerSettings.externalCharacterId === 20) &&
+      !!renderData.animationName.match("Special(Air)?Lw");
+    if (shine.current!.visible) {
+      character.current.traverse?.((obj) => {
+        if (obj.name === "JOBJ_3") {
+          obj.getWorldPosition(shine.current!.position);
+          shine.current!.position.setZ(10);
+          shine.current!.scale.setScalar(
+            renderData.playerSettings.externalCharacterId === 2
+              ? 8.031372549019608
+              : 6.023529411764706,
           );
         }
       });
@@ -162,6 +181,9 @@ export function Character({
           transparent
           opacity={0.6}
         />
+      </Sphere>
+      <Sphere ref={shine} args={[1, 6, 3]}>
+        <meshBasicMaterial color={0x00ffff} transparent opacity={0.9} />
       </Sphere>
     </>
   );
