@@ -1,7 +1,7 @@
 import {
+  Circle,
   Outlines,
   Ring,
-  Sphere,
   useAnimations,
   useGLTF,
 } from "@react-three/drei";
@@ -92,7 +92,11 @@ export function Character({
     if (action) {
       mixer.stopAllAction();
       action.play();
-      mixer.setTime(renderData.animationFrame / 60);
+      mixer.setTime(
+        renderData.animationName === "GuardOn"
+          ? 8 / 60
+          : renderData.animationFrame / 60,
+      );
     }
 
     (character.current.position! as Vector3).set(
@@ -138,6 +142,7 @@ export function Character({
     (character.current.scale! as Vector3).setScalar(characterData.scale);
     shield.current!.visible =
       renderData.animationName === "Guard" ||
+      renderData.animationName === "GuardOn" ||
       renderData.animationName === "GuardDamage";
     if (shield.current!.visible) {
       character.current.traverse?.((obj) => {
@@ -181,7 +186,7 @@ export function Character({
   return (
     <>
       <primitive object={scene} ref={character} dispose={null} />
-      <Sphere ref={shield} scale={10}>
+      <Circle ref={shield} scale={10}>
         <meshBasicMaterial
           color={[0xff4444, 0x4444ff, 0xffff44, 0xbbffbb][settings.playerIndex]}
           transparent
@@ -193,7 +198,7 @@ export function Character({
           transparent
           opacity={1}
         />
-      </Sphere>
+      </Circle>
       <Ring ref={shine} args={[0.5, 1, 6]} rotation-z={Math.PI / 6}>
         <meshBasicMaterial color={0x00bbbb} />
       </Ring>
