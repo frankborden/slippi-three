@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const kirby: Character = {
   scale: 0.92,
-  shieldOffset: [0, 4.828],
+  shieldBone: 57,
   shieldSize: 0.92 * 14.7,
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

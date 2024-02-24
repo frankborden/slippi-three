@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const pikachu: Character = {
   scale: 0.9,
-  shieldOffset: [2.724, 9.003], // TODO
+  shieldBone: 51,
   shieldSize: 0.9 * 12,
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

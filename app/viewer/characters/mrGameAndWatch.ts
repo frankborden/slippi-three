@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const mrGameAndWatch: Character = {
   scale: 1.02,
-  shieldOffset: [0, 4.828], // TODO
+  shieldBone: 51,
   shieldSize: 1.02 * 10.75,
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

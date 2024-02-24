@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const zelda: Character = {
   scale: 1.26,
-  shieldOffset: [0.541, 6.969],
+  shieldBone: 116,
   shieldSize: 1.26 * 11.875,
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const luigi: Character = {
   scale: 1.25,
-  shieldOffset: [2.724, 9.003], // model units // TODO
+  shieldBone: 59,
   shieldSize: 1.25 * 10.75, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const youngLink: Character = {
   scale: 0.96,
-  shieldOffset: [2.724, 9.003], // model units // TODO
+  shieldBone: 78,
   shieldSize: 0.96 * 11.625, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const iceClimbers: Character = {
   scale: 1.15,
-  shieldOffset: [2.724, 9.003], // model units // TODO
+  shieldBone: 47,
   shieldSize: 1.15 * 10.75, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

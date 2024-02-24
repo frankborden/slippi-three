@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const fox: Character = {
   scale: 0.96,
-  shieldOffset: [2.724, 9.003], // model units
+  shieldBone: 71,
   shieldSize: 0.96 * 14.375, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

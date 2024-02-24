@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const donkeyKong: Character = {
   scale: 1,
-  shieldOffset: [2.724, 9.003], // model units // TODO
+  shieldBone: 73,
   shieldSize: 1 * 17.75, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const captainFalcon: Character = {
   scale: 0.97,
-  shieldOffset: [0.2, 10.447],
+  shieldBone: 61,
   shieldSize: 0.97 * 15,
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

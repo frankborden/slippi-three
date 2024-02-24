@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const marth: Character = {
   scale: 1.15,
-  shieldOffset: [0.893, 7.257],
+  shieldBone: 88,
   shieldSize: 1.15 * 11.75,
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

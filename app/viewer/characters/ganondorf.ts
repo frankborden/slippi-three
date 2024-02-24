@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const ganondorf: Character = {
   scale: 1.08,
-  shieldOffset: [0.2, 10.447], // TODO
+  shieldBone: 82,
   shieldSize: 1.08 * 15,
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

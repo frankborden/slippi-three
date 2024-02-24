@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const falco: Character = {
   scale: 1.1,
-  shieldOffset: [2.724, 9.003],
+  shieldBone: 65,
   shieldSize: 1.1 * 12.5,
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

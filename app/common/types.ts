@@ -38,9 +38,8 @@ export interface RenderData {
 
 export interface Character {
   scale: number;
-  shieldOffset: [number, number];
-  // Model Size * Shield Size attributes
-  shieldSize: number;
+  shieldBone: number; // JOBJ_XX
+  shieldSize: number; // Model Size * Shield Size attributes
   animationMap: Map<string, string>;
   specialsMap: Map<number, string>;
 }

@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const mewtwo: Character = {
   scale: 1,
-  shieldOffset: [2.724, 9.003], // model units // TODO
+  shieldBone: 66,
   shieldSize: 1 * 16.25, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

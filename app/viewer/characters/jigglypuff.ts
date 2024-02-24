@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const jigglypuff: Character = {
   scale: 0.94,
-  shieldOffset: [0, 4.828],
+  shieldBone: 48,
   shieldSize: 0.94 * 13.125,
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

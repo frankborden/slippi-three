@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const roy: Character = {
   scale: 1.08,
-  shieldOffset: [0.893, 7.257], // TODO
+  shieldBone: 90,
   shieldSize: 1.08 * 11.75,
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

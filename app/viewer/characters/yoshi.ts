@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const yoshi: Character = {
   scale: 1.05,
-  shieldOffset: [2.724, 9.003], // model units // TODO
+  shieldBone: 68,
   shieldSize: 1.05 * 6, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

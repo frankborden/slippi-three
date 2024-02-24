@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const sheik: Character = {
   scale: 1.4,
-  shieldOffset: [0.541, 6.969],
+  shieldBone: 56,
   shieldSize: 1.4 * 11.625,
   animationMap: new Map<string, string>([
     ["AppealL", "Appeal"],

@@ -2,8 +2,7 @@ import { type Character } from "~/common/types";
 
 export const peach: Character = {
   scale: 1.15,
-  shieldOffset: [5 / 4.5, 34 / 4.5], // guess
-
+  shieldBone: 112,
   shieldSize: 1.15 * 11.875,
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

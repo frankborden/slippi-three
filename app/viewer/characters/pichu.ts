@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const pichu: Character = {
   scale: 0.5,
-  shieldOffset: [2.724, 9.003], // TODO
+  shieldBone: 44,
   shieldSize: 0.5 * 24.3,
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],

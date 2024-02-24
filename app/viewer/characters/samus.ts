@@ -2,7 +2,7 @@ import { type Character } from "~/common/types";
 
 export const samus: Character = {
   scale: 0.88,
-  shieldOffset: [2.724, 9.003], // model units // TODO
+  shieldBone: 58,
   shieldSize: 0.88 * 16.25, // world units
   animationMap: new Map<string, string>([
     ["AppealL", "AppealL"],
