@@ -8,7 +8,7 @@ import { renderReplay } from "~/viewer/render";
 import { store } from "~/viewer/store";
 
 export default function Index() {
-  const { setRenderData, setReplay } = store();
+  const { setRenderData, setReplay, setFrame, setPaused } = store();
 
   async function openFile(files: FileList | null) {
     if (!files) return;
@@ -18,6 +18,8 @@ export default function Index() {
     const replay = parseReplay(metadata, raw);
     setReplay(replay);
     setRenderData(renderReplay(replay));
+    setFrame(0);
+    setPaused(false);
   }
 
   return (
