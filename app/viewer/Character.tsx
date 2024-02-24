@@ -1,9 +1,15 @@
 import { Sphere, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
-import { Euler, MeshBasicMaterial, SkinnedMesh, type Vector3 } from "three";
+import {
+  type Euler,
+  type Mesh,
+  type MeshBasicMaterial,
+  type SkinnedMesh,
+  type Vector3,
+} from "three";
 
-import { PlayerSettings } from "~/common/types";
+import { type PlayerSettings } from "~/common/types";
 import { actionMapByInternalId } from "~/viewer/characters";
 import { store } from "~/viewer/store";
 
@@ -60,7 +66,7 @@ export function Character({
   }, [scene, settings, tint]);
 
   const character = useRef<JSX.IntrinsicElements["group"] | null>(null);
-  const shield = useRef<typeof Sphere | null>(null);
+  const shield = useRef<Mesh | null>(null);
   const { mixer, actions } = useAnimations(animations, scene);
 
   useFrame(() => {
