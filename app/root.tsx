@@ -8,8 +8,8 @@ import {
 
 import "~/root.css";
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/serviceworker.js");
+if (globalThis.navigator && "serviceWorker" in globalThis.navigator) {
+  globalThis.navigator.serviceWorker.register("/serviceworker.js");
 }
 
 export default function App() {

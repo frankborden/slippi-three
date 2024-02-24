@@ -82,12 +82,7 @@ export function Character({
       .renderData?.[
         store.getState().frame
       ].find((r) => r.playerSettings.playerIndex === settings.playerIndex);
-    const prevRenderData = store
-      .getState()
-      .renderData?.[
-        store.getState().frame - 1
-      ]?.find((r) => r.playerSettings.playerIndex === settings.playerIndex);
-    if (!renderData || !prevRenderData || !character.current) return;
+    if (!renderData || !character.current) return;
     const action = actions[renderData.animationName];
     if (action) {
       mixer.stopAllAction();
