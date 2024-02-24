@@ -31,8 +31,8 @@ export function Character({
   );
 
   useEffect(() => {
-    // TODO: Position already captures movement caused by animations JOBJ_1
-    // and JOBJ_0 keyframes should be cleared in Blender.
+    // Animations for the top-level bones drive the character's position, so
+    // they must be ignored during playback to aviod being double-counted.
     animations.forEach((animation) => {
       animation.tracks = animation.tracks.filter(
         (track) =>
@@ -183,7 +183,7 @@ export function Character({
         />
       </Sphere>
       <Sphere ref={shine} args={[1, 6, 3]}>
-        <meshBasicMaterial color={0x00ffff} transparent opacity={0.9} />
+        <meshBasicMaterial color={0x00bbbb} transparent opacity={0.7} />
       </Sphere>
     </>
   );
