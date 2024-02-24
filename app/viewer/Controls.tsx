@@ -26,6 +26,12 @@ export function Controls() {
       case "k":
         setPaused(!paused);
         break;
+      case ",":
+        setFrame(Math.max(0, frame - 1));
+        break;
+      case ".":
+        setFrame(Math.min(replay?.frames.length ?? 1, frame + 1));
+        break;
       case "0":
       case "1":
       case "2":

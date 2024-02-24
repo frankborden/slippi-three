@@ -123,13 +123,28 @@ export function Character({
     const characterData =
       actionMapByInternalId[renderData.playerState.internalCharacterId];
     (character.current.scale! as Vector3).setScalar(characterData.scale);
-    character.current.traverse?.((obj) => {
-      if (obj.name === `JOBJ_${characterData.shieldBone}`) {
-        obj.getWorldPosition(shield.current!.position);
-        shield.current!.scale.setScalar(characterData.shieldSize);
-      }
-      shield.current!.visible = renderData.animationName === "Guard";
-    });
+    shield.current!.visible =
+      renderData.animationName === "Guard" ||
+      renderData.animationName === "GuardDamage";
+    if (shield.current!.visible) {
+      character.current.traverse?.((obj) => {
+        if (obj.name === `JOBJ_${characterData.shieldBone}`) {
+          const triggerStrength =
+            renderData.playerInputs.processed.anyTrigger === 0
+              ? 1
+              : renderData.playerInputs.processed.anyTrigger;
+          const triggerStrengthMultiplier =
+            1 - (0.5 * (triggerStrength - 0.3)) / 0.7;
+          const shieldHealth = renderData.playerState.shieldSize;
+          const shieldSizeMultiplier =
+            ((shieldHealth * triggerStrengthMultiplier) / 60) * 0.85 + 0.15;
+          obj.getWorldPosition(shield.current!.position);
+          shield.current!.scale.setScalar(
+            characterData.shieldSize * shieldSizeMultiplier,
+          );
+        }
+      });
+    }
   }, -1);
 
   return (
@@ -137,7 +152,7 @@ export function Character({
       <primitive object={scene} ref={character} dispose={null} />
       <Sphere ref={shield} scale={10}>
         <meshBasicMaterial
-          color={[0xff4444, 0x4444ff, 0xffff44, 0x44ff44][settings.playerIndex]}
+          color={[0xff4444, 0x4444ff, 0xffff44, 0xbbffbb][settings.playerIndex]}
           transparent
           opacity={0.6}
         />
