@@ -1,4 +1,10 @@
-import { Sphere, useAnimations, useGLTF } from "@react-three/drei";
+import {
+  Outlines,
+  Ring,
+  Sphere,
+  useAnimations,
+  useGLTF,
+} from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import {
@@ -146,7 +152,7 @@ export function Character({
           const shieldSizeMultiplier =
             ((shieldHealth * triggerStrengthMultiplier) / 60) * 0.85 + 0.15;
           obj.getWorldPosition(shield.current!.position);
-          shield.current!.position.setZ(10);
+          shield.current!.position.setZ(20);
           shield.current!.scale.setScalar(
             characterData.shieldSize * shieldSizeMultiplier,
           );
@@ -161,7 +167,7 @@ export function Character({
       character.current.traverse?.((obj) => {
         if (obj.name === "JOBJ_3") {
           obj.getWorldPosition(shine.current!.position);
-          shine.current!.position.setZ(10);
+          shine.current!.position.setZ(20);
           shine.current!.scale.setScalar(
             renderData.playerSettings.externalCharacterId === 2
               ? 8.031372549019608
@@ -179,12 +185,18 @@ export function Character({
         <meshBasicMaterial
           color={[0xff4444, 0x4444ff, 0xffff44, 0xbbffbb][settings.playerIndex]}
           transparent
-          opacity={0.6}
+          opacity={0.8}
+        />
+        <Outlines
+          thickness={0.05}
+          color={[0xff4444, 0x4444ff, 0xffff44, 0xbbffbb][settings.playerIndex]}
+          transparent
+          opacity={1}
         />
       </Sphere>
-      <Sphere ref={shine} args={[1, 6, 3]}>
-        <meshBasicMaterial color={0x00bbbb} transparent opacity={0.7} />
-      </Sphere>
+      <Ring ref={shine} args={[0.5, 1, 6]} rotation-z={Math.PI / 6}>
+        <meshBasicMaterial color={0x00bbbb} />
+      </Ring>
     </>
   );
 }
