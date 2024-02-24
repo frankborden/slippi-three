@@ -1,4 +1,4 @@
-import { Circle, Sphere, useAnimations, useGLTF } from "@react-three/drei";
+import { Sphere, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import {
