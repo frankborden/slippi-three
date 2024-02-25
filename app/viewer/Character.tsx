@@ -26,11 +26,12 @@ export function Character({
   settings: PlayerSettings;
   tint: boolean;
 }) {
+  const { openedTimestamp } = store();
   // Junk is appended to the URL to prevent three.js from remounting the same
   // model in dittos and breaking everything. The loader manager must later
   // remove the junk to get back caching.
   const { scene, animations } = useGLTF(
-    `/models/${modelFileByExternalId[settings.externalCharacterId]}.glb?playerIndex=${settings.playerIndex}`,
+    `/models/${modelFileByExternalId[settings.externalCharacterId]}.glb?openedTimestamp=${openedTimestamp}&playerIndex=${settings.playerIndex}`,
     undefined,
     undefined,
     (loader) => loader.manager.setURLModifier((url) => url.split("?")[0]),
@@ -181,7 +182,7 @@ export function Character({
 
   return (
     <>
-      <primitive object={scene} ref={character} dispose={null} />
+      <primitive object={scene} ref={character} />
       <Circle ref={shield} scale={10}>
         <meshBasicMaterial
           color={[0xff4444, 0x4444ff, 0xffff44, 0xbbffbb][settings.playerIndex]}

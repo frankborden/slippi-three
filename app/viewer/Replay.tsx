@@ -45,7 +45,7 @@ function Scene() {
         .filter(Boolean)
         .map((settings) => (
           <Character
-            key={settings.externalCharacterId}
+            key={settings.playerIndex}
             settings={settings}
             tint={duplicateCharacter}
           />

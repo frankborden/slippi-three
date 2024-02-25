@@ -8,7 +8,14 @@ import { renderReplay } from "~/viewer/render";
 import { store } from "~/viewer/store";
 
 export default function Index() {
-  const { setRenderData, setReplay, setFrame, setPaused } = store();
+  const {
+    setRenderData,
+    setReplay,
+    setFrame,
+    setPaused,
+    openedTimestamp,
+    setOpenedTimestamp,
+  } = store();
 
   async function openFile(files: FileList | null) {
     if (!files) return;
@@ -20,6 +27,7 @@ export default function Index() {
     setRenderData(renderReplay(replay));
     setFrame(0);
     setPaused(false);
+    setOpenedTimestamp(Date.now());
   }
 
   return (
@@ -30,7 +38,7 @@ export default function Index() {
         </Button>
       </FileTrigger>
       <div className="relative flex shrink flex-col overflow-y-auto rounded border border-slate-700 bg-slate-950">
-        <Replay />
+        <Replay key={openedTimestamp} />
       </div>
       <Controls />
     </main>
