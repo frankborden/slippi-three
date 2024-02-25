@@ -8,12 +8,16 @@ import { store } from "~/viewer/store";
 
 export function Replay() {
   return (
-    <div className="relative aspect-video max-w-[80vw] rounded border border-slate-700 bg-slate-950">
-      <Canvas orthographic camera={{ position: [0, 0, 100] }}>
+    <>
+      <Canvas
+        orthographic
+        camera={{ position: [0, 0, 100] }}
+        className="aspect-video shrink"
+      >
         <Scene />
       </Canvas>
       <HUD />
-    </div>
+    </>
   );
 }
 

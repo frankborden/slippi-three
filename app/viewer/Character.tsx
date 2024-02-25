@@ -76,7 +76,8 @@ export function Character({
   const shine = useRef<Mesh | null>(null);
   const { mixer, actions } = useAnimations(animations, scene);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
+    clock.running = false;
     const renderData = store
       .getState()
       .renderData?.[

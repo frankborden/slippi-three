@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Label,
   Slider,
@@ -27,9 +27,11 @@ export function Controls() {
         setPaused(!paused);
         break;
       case ",":
+        setPaused(true);
         setFrame(Math.max(0, frame - 1));
         break;
       case ".":
+        setPaused(true);
         setFrame(Math.min((replay?.frames.length ?? 1) - 1, frame + 1));
         break;
       case "0":
@@ -61,7 +63,6 @@ export function Controls() {
       minValue={0}
       maxValue={replay?.frames.length ?? 10}
       onChange={(f) => setFrame(f)}
-      className="my-4 w-[500px]"
     >
       <div className="flex justify-between">
         <Label>Frame</Label>

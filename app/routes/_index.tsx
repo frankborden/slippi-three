@@ -23,14 +23,16 @@ export default function Index() {
   }
 
   return (
-    <div className="p-8">
+    <main className="flex h-screen flex-col gap-4 overflow-y-auto p-8">
       <FileTrigger onSelect={openFile}>
-        <Button className="rounded bg-emerald-700 px-3 py-0.5 text-emerald-50 hover:bg-emerald-600 hover:text-white">
+        <Button className="w-max rounded bg-emerald-700 px-3 py-0.5 text-emerald-50 hover:bg-emerald-600 hover:text-white">
           Open Replay
         </Button>
       </FileTrigger>
+      <div className="relative flex shrink flex-col overflow-y-auto rounded border border-slate-700 bg-slate-950">
+        <Replay />
+      </div>
       <Controls />
-      <Replay />
-    </div>
+    </main>
   );
 }
