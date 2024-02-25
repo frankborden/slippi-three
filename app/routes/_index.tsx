@@ -15,6 +15,7 @@ export default function Index() {
     setPaused,
     openedTimestamp,
     setOpenedTimestamp,
+    replay,
   } = store();
 
   async function openFile(files: FileList | null) {
@@ -37,10 +38,14 @@ export default function Index() {
           Open Replay
         </Button>
       </FileTrigger>
-      <div className="relative flex shrink flex-col overflow-y-auto rounded border border-slate-700 bg-slate-950">
-        <Replay key={openedTimestamp} />
-      </div>
-      <Controls />
+      {replay && (
+        <>
+          <div className="relative flex shrink flex-col overflow-y-auto rounded border border-slate-700 bg-slate-950">
+            <Replay key={openedTimestamp} />
+          </div>
+          <Controls />
+        </>
+      )}
     </main>
   );
 }
