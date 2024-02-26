@@ -76,7 +76,7 @@ export function Controls() {
               className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-white"
               style={{ width: `${state.getThumbPercent(0) * 100}%` }}
             />
-            <SliderThumb className="top-1/2 h-4 w-4 rounded-full border border-slate-900 bg-white ring-black transition" />
+            <SliderThumb className="top-1/2 h-4 w-4 rounded-full border border-neutral-900 bg-white ring-black transition" />
           </>
         )}
       </SliderTrack>

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20240222.0",
+    "@egoist/tailwindcss-icons": "^1.7.4",
+    "@iconify/json": "^2.2.187",
     "@react-three/drei": "^9.99.4",
     "@react-three/fiber": "^8.15.16",
     "@remix-run/cloudflare": "^2.7.2",
@@ -31,6 +33,7 @@
     "react": "^18.2.0",
     "react-aria-components": "^1.1.1",
     "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.1",
     "tailwindcss": "^3.4.1",
     "tailwindcss-react-aria-components": "^1.1.1",
     "three": "^0.161.0",

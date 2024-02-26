@@ -1,3 +1,4 @@
+import { getIconCollections, iconsPlugin } from "@egoist/tailwindcss-icons";
 import { type Config } from "tailwindcss";
 import reactAria from "tailwindcss-react-aria-components";
 
@@ -6,5 +7,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [reactAria()],
+  plugins: [
+    reactAria(),
+    iconsPlugin({ collections: getIconCollections(["game-icons", "tabler"]) }),
+  ],
 } satisfies Config;
