@@ -35,18 +35,19 @@ export default function App() {
             </Link>
             <PageLink icon="i-tabler-device-tv" to="/replay" />
             <PageLink icon="i-tabler-notebook" to="/framedata" />
-            <PageLink icon="i-tabler-user-circle" to="account" />
-            <PageLink icon="i-tabler-settings" to="/settings" />
+            <PageLink icon="i-tabler-angle" to="/calculator" />
             <a
               href="https://github.com/frankborden/slippilab"
               target="_blank"
-              className="i-tabler-brand-github text-4xl text-neutral-400 hover:text-neutral-300"
+              className="i-tabler-brand-github mt-auto text-3xl text-neutral-400 hover:text-neutral-300"
             />
             <a
               href="https://twitter.com/slippilab"
               target="_blank"
-              className="i-tabler-brand-twitter text-4xl text-neutral-400 hover:text-neutral-300"
+              className="i-tabler-brand-twitter text-3xl text-neutral-400 hover:text-neutral-300"
             />
+            <PageLink icon="i-tabler-user-circle" to="account" />
+            <PageLink icon="i-tabler-settings" to="/settings" />
           </nav>
           <Outlet />
         </div>
