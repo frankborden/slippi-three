@@ -33,7 +33,7 @@ export default function App() {
             >
               SL
             </Link>
-            <PageLink icon="i-tabler-device-tv" to="/replay" />
+            <PageLink icon="i-tabler-device-tv-old" to="/replay" />
             <PageLink icon="i-tabler-notebook" to="/framedata" />
             <PageLink icon="i-tabler-angle" to="/calculator" />
             <a
