@@ -9,6 +9,6 @@ export default {
   },
   plugins: [
     reactAria(),
-    iconsPlugin({ collections: getIconCollections(["game-icons", "tabler"]) }),
+    iconsPlugin({ collections: getIconCollections(["mynaui", "tabler"]) }),
   ],
 } satisfies Config;
