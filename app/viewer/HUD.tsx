@@ -4,7 +4,7 @@ export function HUD() {
   const { replay, frame } = store();
   return (
     <>
-      <div className="absolute left-0 top-1 flex w-full justify-center text-white">
+      <div className="absolute left-0 top-1 flex w-full justify-center text-2xl text-white">
         {timer(frame)}
       </div>
       <div className="absolute bottom-1 left-0 grid w-full grid-cols-4 text-white">
@@ -27,7 +27,7 @@ export function HUD() {
                 <img
                   key={i}
                   src={`/stockicons/${settings.externalCharacterId}/0.png`}
-                  className="size-4"
+                  className="size-6"
                 />
               ))}
             </div>
@@ -39,7 +39,7 @@ export function HUD() {
                 ],
               }}
             >
-              <div className="col-start-2 text-lg">
+              <div className="col-start-2 text-3xl">
                 {replay.frames[frame].players[settings.playerIndex].state
                   .actionStateId <= 10 // Dead.*
                   ? 0
@@ -48,9 +48,9 @@ export function HUD() {
                         .percent,
                     )}
               </div>
-              <div className="col-start-3 text-base">%</div>
+              <div className="col-start-3 text-xl">%</div>
             </div>
-            <div className="text-sm">{settings.displayName}</div>
+            <div className="text-xl">{settings.displayName}</div>
           </div>
         ))}
       </div>
