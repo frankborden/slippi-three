@@ -63,8 +63,9 @@ export function Controls() {
       minValue={0}
       maxValue={replay?.frames.length ?? 10}
       onChange={(f) => setFrame(f)}
+      className="mx-2"
     >
-      <div className="flex justify-between">
+      <div className="flex items-baseline gap-1">
         <Label>Frame</Label>
         <SliderOutput />
       </div>

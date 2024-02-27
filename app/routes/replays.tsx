@@ -22,10 +22,10 @@ export default function Page() {
   return (
     <div className="flex grow">
       <ReplayList />
-      <div className="grow bg-zinc-800">
+      <div className="grow bg-zinc-800 p-4">
         {replay && (
           <>
-            <div className="relative flex shrink flex-col overflow-y-auto rounded border border-zinc-700">
+            <div className="relative flex flex-col overflow-y-auto rounded border border-zinc-700 bg-zinc-950">
               <Replay key={openedTimestamp} />
             </div>
             <Controls />
