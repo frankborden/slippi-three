@@ -41,7 +41,7 @@ import { Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 //       </FileTrigger>
 //       {replay && (
 //         <>
-//           <div className="relative flex shrink flex-col overflow-y-auto rounded border border-neutral-700 bg-neutral-950">
+//           <div className="relative flex shrink flex-col overflow-y-auto rounded border border-zinc-700 bg-zinc-950">
 //             <Replay key={openedTimestamp} />
 //           </div>
 //           <Controls />
@@ -52,20 +52,25 @@ import { Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 // }
 
 export default function Page() {
-  return <ReplayList />;
+  return (
+    <div className="flex grow">
+      <ReplayList />
+      <div className="grid grow place-items-center bg-zinc-800">replays</div>
+    </div>
+  );
 }
 
 function ReplayList() {
   return (
-    <Tabs>
-      <TabList className="flex gap-2 p-4 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-selected]]:bg-neutral-200 [&>[data-selected]]:text-neutral-950">
+    <Tabs className="border-r border-r-zinc-700 bg-zinc-900 p-6">
+      <TabList className="flex gap-3 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-200 [&>[data-selected]]:text-zinc-950">
+        <Tab id="personal">Personal</Tab>
         <Tab id="uploads">Uploads</Tab>
         <Tab id="events">Events</Tab>
-        <Tab id="personal">Personal</Tab>
       </TabList>
+      <TabPanel id="personal">personal</TabPanel>
       <TabPanel id="uploads">uploads</TabPanel>
       <TabPanel id="events">events</TabPanel>
-      <TabPanel id="personal">personal</TabPanel>
     </Tabs>
   );
 }
