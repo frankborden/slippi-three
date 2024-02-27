@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { MathUtils, type OrthographicCamera } from "three";
 
-import { store } from "~/viewer/store";
+import { store } from "~/store";
 
 export function Camera() {
   const { frame, replay, renderData } = store();

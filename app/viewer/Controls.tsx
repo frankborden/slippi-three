@@ -7,7 +7,7 @@ import {
   SliderTrack,
 } from "react-aria-components";
 
-import { store } from "~/viewer/store";
+import { store } from "~/store";
 
 export function Controls() {
   const { replay, frame, setFrame, paused, setPaused } = store();

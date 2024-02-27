@@ -16,8 +16,8 @@ import {
 } from "three";
 
 import { type PlayerSettings } from "~/common/types";
+import { store } from "~/store";
 import { actionMapByInternalId } from "~/viewer/characters";
-import { store } from "~/viewer/store";
 
 export function Character({
   settings,

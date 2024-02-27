@@ -1,10 +1,10 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 
+import { store } from "~/store";
 import { Camera } from "~/viewer/Camera";
 import { Character } from "~/viewer/Character";
 import { HUD } from "~/viewer/HUD";
 import { Stage } from "~/viewer/Stage";
-import { store } from "~/viewer/store";
 
 export function Replay() {
   return (

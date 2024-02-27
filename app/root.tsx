@@ -33,7 +33,7 @@ export default function App() {
           <div className="flex h-screen">
             <nav className="flex flex-col items-center gap-8 border-r border-r-zinc-800 bg-zinc-950 p-6">
               <Link
-                className="mb-4 grid size-10 place-items-center rounded bg-zinc-300 font-bold leading-none text-zinc-950 transition-colors duration-200 ease-in-out hover:bg-zinc-100"
+                className="mb-4 grid size-10 place-items-center rounded bg-zinc-200 font-bold leading-none text-zinc-950 transition-colors duration-200 ease-in-out hover:bg-zinc-50"
                 to="/"
               >
                 SL

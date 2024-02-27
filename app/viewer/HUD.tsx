@@ -1,4 +1,4 @@
-import { store } from "~/viewer/store";
+import { store } from "~/store";
 
 export function HUD() {
   const { replay, frame } = store();

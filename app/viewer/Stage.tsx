@@ -1,7 +1,7 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { useEffect } from "react";
 
-import { store } from "~/viewer/store";
+import { store } from "~/store";
 
 export function Stage() {
   const { replay } = store();
