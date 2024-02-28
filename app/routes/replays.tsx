@@ -64,11 +64,22 @@ function ReplayList() {
           <Tab id="events">Events</Tab>
         </TabList>
         <TabPanel id="personal">
-          <FileTrigger onSelect={openFile}>
-            <Button className="w-max rounded bg-zinc-700 px-3 py-0.5 text-zinc-50 hover:bg-zinc-600 hover:text-white">
-              Open File
-            </Button>
-          </FileTrigger>
+          <div className="flex justify-center gap-4">
+            <FileTrigger
+              onSelect={openFile}
+              acceptedFileTypes={[".slp"]}
+              allowsMultiple
+            >
+              <Button className="rounded bg-zinc-300 px-3 py-0.5 text-zinc-950 hover:bg-zinc-100 hover:text-black">
+                Open Files
+              </Button>
+            </FileTrigger>
+            <FileTrigger acceptDirectory onSelect={openFile}>
+              <Button className="rounded bg-zinc-300 px-3 py-0.5 text-zinc-950 hover:bg-zinc-100 hover:text-black">
+                Open Folder
+              </Button>
+            </FileTrigger>
+          </div>
         </TabPanel>
         <TabPanel id="uploads">uploads</TabPanel>
         <TabPanel id="events">events</TabPanel>
