@@ -54,15 +54,6 @@ function ReplayList() {
   async function openFile(files: FileList | null) {
     if (!files) return;
     addFiles(Array.from(files));
-    // const { raw, metadata } = decode(await files[0].arrayBuffer(), {
-    //   useTypedArrays: true,
-    // });
-    // const replay = parseReplay(metadata, raw);
-    // setReplay(replay);
-    // setRenderData(renderReplay(replay));
-    // setFrame(0);
-    // setPaused(false);
-    // setOpenedTimestamp(Date.now());
   }
 
   return (
@@ -96,9 +87,24 @@ function ReplayList() {
         <TabPanel id="events">events</TabPanel>
       </Tabs>
       <ListBox
-        items={stubs}
+        items={stubs.slice(0, 15)}
         aria-label="Replays"
         className="max-h-[40vh] overflow-y-auto"
+        selectionMode="single"
+        onSelectionChange={async (keys) => {
+          if (keys === "all") return;
+          const name = [...keys.values()][0];
+          const [, file] = stubs.find(([, file]) => file.name === name)!;
+          const { raw, metadata } = decode(await file.arrayBuffer(), {
+            useTypedArrays: true,
+          });
+          const replay = parseReplay(metadata, raw);
+          setReplay(replay);
+          setRenderData(renderReplay(replay));
+          setFrame(0);
+          setPaused(false);
+          setOpenedTimestamp(Date.now());
+        }}
       >
         {([stub, file]) => (
           <ListBoxItem id={file.name} textValue={file.name}>
