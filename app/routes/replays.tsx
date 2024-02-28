@@ -88,7 +88,7 @@ function ReplayList() {
         <TabPanel id="events">events</TabPanel>
       </Tabs>
       <ListBox
-        items={stubs.slice(0, 15)}
+        items={stubs.slice(0, 10)}
         aria-label="Replays"
         selectionMode="single"
         className="flex flex-col gap-1"
@@ -113,17 +113,24 @@ function ReplayList() {
             textValue={file.name}
             className={({ isHovered, isSelected }) =>
               cn(
-                "rounded px-4 py-1 focus:outline-none",
+                "flex items-center gap-6 rounded px-4 py-1 focus:outline-none",
                 isHovered && "cursor-pointer bg-neutral-700",
                 isSelected && "bg-neutral-300 text-neutral-950",
               )
             }
           >
-            {stages[stub.stageId]}
-            {": "}
-            {stub.players
-              .map((p) => shortCharactersExt[p.externalCharacterId])
-              .join(", ")}
+            <img src={`/stages/${stub.stageId}.png`} className="h-12 rounded" />
+            <div className="flex flex-col gap-2">
+              {stub.players.map((p) => (
+                <div className="flex items-center gap-1">
+                  <img
+                    src={`/stockicons/${p.externalCharacterId}/${p.costumeIndex}.png`}
+                    className="size-4"
+                  />
+                  <div>{p.connectCode}</div>
+                </div>
+              ))}
+            </div>
           </ListBoxItem>
         )}
       </ListBox>
