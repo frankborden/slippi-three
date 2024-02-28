@@ -13,7 +13,6 @@ import {
 } from "react-aria-components";
 import { twMerge as cn } from "tailwind-merge";
 
-import { shortCharactersExt, stages } from "~/common/names";
 import { parseReplay } from "~/parser";
 import { store } from "~/store";
 import { Controls } from "~/viewer/Controls";
