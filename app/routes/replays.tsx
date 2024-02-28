@@ -60,13 +60,13 @@ function ReplayList() {
     <div className="border-r border-r-zinc-700 bg-zinc-900 px-6 py-4">
       <div className="mb-0.5 ml-2 text-sm">Source</div>
       <Tabs onSelectionChange={setSource} selectedKey={source}>
-        <TabList className="mb-4 flex gap-3 rounded-lg border border-zinc-600 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
+        <TabList className="mb-4 flex w-max gap-3 rounded-lg border border-zinc-600 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
           <Tab id="personal">Personal</Tab>
           <Tab id="uploads">Uploads</Tab>
           <Tab id="events">Events</Tab>
         </TabList>
         <TabPanel id="personal">
-          <div className="mb-4 flex justify-center gap-4">
+          <div className="mb-4 flex gap-4">
             <FileTrigger
               onSelect={openFile}
               acceptedFileTypes={[".slp"]}
@@ -112,24 +112,30 @@ function ReplayList() {
             textValue={file.name}
             className={({ isHovered, isSelected }) =>
               cn(
-                "flex items-center gap-6 rounded px-4 py-1 focus:outline-none",
+                "group flex items-center gap-6 rounded px-4 py-2 focus:outline-none",
                 isHovered && "cursor-pointer bg-neutral-700",
                 isSelected && "bg-neutral-300 text-neutral-950",
               )
             }
           >
-            <img src={`/stages/${stub.stageId}.png`} className="h-12 rounded" />
-            <div className="flex flex-col gap-2">
-              {stub.players.map((p) => (
-                <div className="flex items-center gap-1">
-                  <img
-                    src={`/stockicons/${p.externalCharacterId}/${p.costumeIndex}.png`}
-                    className="size-4"
-                  />
-                  <div>{p.connectCode}</div>
+            <img
+              src={`/stages/${stub.stageId}.png`}
+              className="h-12 rounded  border border-neutral-700 group-aria-selected:border-neutral-400"
+            />
+            {stub.players.map((p) => (
+              <div className="flex items-center gap-2">
+                <img
+                  src={`/stockicons/${p.externalCharacterId}/${p.costumeIndex}.png`}
+                  className="size-6"
+                />
+                <div>
+                  <div>{p.displayName}</div>
+                  <div className="text-sm text-neutral-400 group-aria-selected:text-neutral-600">
+                    {p.connectCode}
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </ListBoxItem>
         )}
       </ListBox>
