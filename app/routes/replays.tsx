@@ -11,6 +11,7 @@ import {
   TabPanel,
   Tabs,
 } from "react-aria-components";
+import { twMerge as cn } from "tailwind-merge";
 
 import { shortCharactersExt, stages } from "~/common/names";
 import { parseReplay } from "~/parser";
@@ -60,13 +61,13 @@ function ReplayList() {
     <div className="border-r border-r-zinc-700 bg-zinc-900 px-6 py-4">
       <div className="mb-0.5 ml-2 text-sm">Source</div>
       <Tabs onSelectionChange={setSource} selectedKey={source}>
-        <TabList className="mb-4 flex gap-3 rounded-lg border border-zinc-600 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-200 [&>[data-selected]]:text-zinc-950">
+        <TabList className="mb-4 flex gap-3 rounded-lg border border-zinc-600 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
           <Tab id="personal">Personal</Tab>
           <Tab id="uploads">Uploads</Tab>
           <Tab id="events">Events</Tab>
         </TabList>
         <TabPanel id="personal">
-          <div className="flex justify-center gap-4">
+          <div className="mb-4 flex justify-center gap-4">
             <FileTrigger
               onSelect={openFile}
               acceptedFileTypes={[".slp"]}
@@ -89,8 +90,8 @@ function ReplayList() {
       <ListBox
         items={stubs.slice(0, 15)}
         aria-label="Replays"
-        className="max-h-[40vh] overflow-y-auto"
         selectionMode="single"
+        className="flex flex-col gap-1"
         onSelectionChange={async (keys) => {
           if (keys === "all") return;
           const name = [...keys.values()][0];
@@ -107,7 +108,17 @@ function ReplayList() {
         }}
       >
         {([stub, file]) => (
-          <ListBoxItem id={file.name} textValue={file.name}>
+          <ListBoxItem
+            id={file.name}
+            textValue={file.name}
+            className={({ isHovered, isSelected }) =>
+              cn(
+                "rounded px-4 py-1 focus:outline-none",
+                isHovered && "cursor-pointer bg-neutral-700",
+                isSelected && "bg-neutral-300 text-neutral-950",
+              )
+            }
+          >
             {stages[stub.stageId]}
             {": "}
             {stub.players
