@@ -123,7 +123,7 @@ function ReplayList() {
               className="h-12 rounded  border border-neutral-700 group-aria-selected:border-neutral-400"
             />
             {stub.players.map((p) => (
-              <div className="flex items-center gap-2">
+              <div key={p.playerIndex} className="flex items-center gap-2">
                 <img
                   src={`/stockicons/${p.externalCharacterId}/${p.costumeIndex}.png`}
                   className="size-6"
