@@ -1,8 +1,22 @@
 import { create } from "zustand";
 
-import { RenderData, ReplayData } from "~/common/types";
+import { RenderData, ReplayData, ReplayStub } from "~/common/types";
+import ParserWorker from "~/worker?worker";
+
+let worker: Worker | undefined;
+if (typeof document !== "undefined") {
+  worker = new ParserWorker();
+}
 
 export interface Store {
+  // Local files
+  addFiles: (files: File[]) => void;
+  parseProgress: number | undefined;
+  setParseProgress: (parseProgress: number | undefined) => void;
+  stubs: [ReplayStub, File][];
+  setStubs: (stubs: [ReplayStub, File][]) => void;
+
+  // Viewer
   openedTimestamp: number;
   setOpenedTimestamp: (openedTimestamp: number) => void;
   frame: number;
@@ -16,6 +30,15 @@ export interface Store {
 }
 
 export const store = create<Store>((set) => ({
+  // Local files
+  addFiles: (files: File[]) => worker?.postMessage(files),
+  parseProgress: undefined,
+  setParseProgress: (parseProgress: number | undefined) =>
+    set({ parseProgress }),
+  stubs: [],
+  setStubs: (stubs: [ReplayStub, File][]) => set({ stubs }),
+
+  // Viewer
   openedTimestamp: Date.now(),
   setOpenedTimestamp: (openedTimestamp: number) => set({ openedTimestamp }),
   frame: 0,
@@ -27,3 +50,13 @@ export const store = create<Store>((set) => ({
   paused: false,
   setPaused: (paused: boolean) => set({ paused }),
 }));
+
+if (worker) {
+  worker.onmessage = (event) => {
+    if (event.data.progress !== undefined) {
+      store.getState().setParseProgress(event.data.progress);
+    } else {
+      store.getState().setStubs(event.data.stubs);
+    }
+  };
+}

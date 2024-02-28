@@ -4,12 +4,15 @@ import {
   Button,
   FileTrigger,
   Key,
+  ListBox,
+  ListBoxItem,
   Tab,
   TabList,
   TabPanel,
   Tabs,
 } from "react-aria-components";
 
+import { shortCharactersExt, stages } from "~/common/names";
 import { parseReplay } from "~/parser";
 import { store } from "~/store";
 import { Controls } from "~/viewer/Controls";
@@ -38,20 +41,28 @@ export default function Page() {
 
 function ReplayList() {
   const [source, setSource] = useState<Key>("personal");
-  const { setRenderData, setReplay, setFrame, setPaused, setOpenedTimestamp } =
-    store();
+  const {
+    setRenderData,
+    setReplay,
+    setFrame,
+    setPaused,
+    setOpenedTimestamp,
+    addFiles,
+    stubs,
+  } = store();
 
   async function openFile(files: FileList | null) {
     if (!files) return;
-    const { raw, metadata } = decode(await files[0].arrayBuffer(), {
-      useTypedArrays: true,
-    });
-    const replay = parseReplay(metadata, raw);
-    setReplay(replay);
-    setRenderData(renderReplay(replay));
-    setFrame(0);
-    setPaused(false);
-    setOpenedTimestamp(Date.now());
+    addFiles(Array.from(files));
+    // const { raw, metadata } = decode(await files[0].arrayBuffer(), {
+    //   useTypedArrays: true,
+    // });
+    // const replay = parseReplay(metadata, raw);
+    // setReplay(replay);
+    // setRenderData(renderReplay(replay));
+    // setFrame(0);
+    // setPaused(false);
+    // setOpenedTimestamp(Date.now());
   }
 
   return (
@@ -84,6 +95,21 @@ function ReplayList() {
         <TabPanel id="uploads">uploads</TabPanel>
         <TabPanel id="events">events</TabPanel>
       </Tabs>
+      <ListBox
+        items={stubs}
+        aria-label="Replays"
+        className="max-h-[40vh] overflow-y-auto"
+      >
+        {([stub, file]) => (
+          <ListBoxItem id={file.name} textValue={file.name}>
+            {stages[stub.stageId]}
+            {": "}
+            {stub.players
+              .map((p) => shortCharactersExt[p.externalCharacterId])
+              .join(", ")}
+          </ListBoxItem>
+        )}
+      </ListBox>
     </div>
   );
 }
