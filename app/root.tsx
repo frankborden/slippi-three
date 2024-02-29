@@ -32,12 +32,7 @@ export default function App() {
         <RouterProvider navigate={navigate}>
           <div className="flex h-screen">
             <nav className="flex flex-col items-center gap-8 border-r border-r-zinc-800 bg-zinc-950 p-6">
-              <Link
-                className="mb-4 flex flex-col items-center gap-1 text-emerald-400 transition-colors duration-200 ease-in-out hover:text-emerald-300"
-                to="/"
-              >
-                <div className="i-mynaui-play-hexagon text-5xl" />
-              </Link>
+              <PageLink icon="i-tabler-home" to="/" name="Home" />
               <PageLink
                 icon="i-tabler-device-tv-old"
                 to="/replays"

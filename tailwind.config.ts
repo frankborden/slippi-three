@@ -9,6 +9,8 @@ export default {
   },
   plugins: [
     reactAria(),
-    iconsPlugin({ collections: getIconCollections(["mynaui", "tabler"]) }),
+    iconsPlugin({
+      collections: getIconCollections(["tabler"]),
+    }),
   ],
 } satisfies Config;
