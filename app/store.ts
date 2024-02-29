@@ -57,6 +57,7 @@ if (worker) {
       store.getState().setParseProgress(event.data.progress);
     } else {
       store.getState().setStubs(event.data.stubs);
+      store.getState().setParseProgress(undefined);
     }
   };
 }

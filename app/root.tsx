@@ -1,5 +1,4 @@
 import {
-  Link,
   Links,
   Meta,
   NavLink,
@@ -12,6 +11,7 @@ import { RouterProvider } from "react-aria-components";
 import { twMerge as cn } from "tailwind-merge";
 
 import "~/root.css";
+import { store } from "~/store";
 
 if (globalThis.navigator && "serviceWorker" in globalThis.navigator) {
   globalThis.navigator.serviceWorker.register("/serviceworker.js");
@@ -19,6 +19,7 @@ if (globalThis.navigator && "serviceWorker" in globalThis.navigator) {
 
 export default function App() {
   let navigate = useNavigate();
+  let { parseProgress } = store();
 
   return (
     <html lang="en">
@@ -29,6 +30,16 @@ export default function App() {
         <Links />
       </head>
       <body className="bg-zinc-900 text-zinc-200">
+        {parseProgress !== undefined && (
+          <div className="fixed inset-x-0 top-0 z-10 h-1 bg-zinc-950">
+            <div
+              className="h-full w-full bg-zinc-300"
+              style={{
+                transform: `translateX(${-100 + parseProgress}%)`,
+              }}
+            />
+          </div>
+        )}
         <RouterProvider navigate={navigate}>
           <div className="flex h-screen">
             <nav className="flex flex-col items-center gap-8 border-r border-r-zinc-800 bg-zinc-950 p-6">
