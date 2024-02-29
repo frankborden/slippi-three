@@ -1,4 +1,4 @@
 - bun i
-- bun run dev
+- bun dev
 
 https://slippi-three.pages.dev
