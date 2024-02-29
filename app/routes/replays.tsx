@@ -113,14 +113,15 @@ function ReplayList() {
             className={({ isHovered, isSelected }) =>
               cn(
                 "group flex items-center gap-6 rounded px-4 py-2 focus:outline-none",
-                isHovered && "cursor-pointer bg-neutral-700",
-                isSelected && "bg-neutral-300 text-neutral-950",
+                isHovered && "cursor-pointer bg-zinc-700",
+                isSelected && "bg-zinc-300 text-zinc-950",
               )
             }
           >
+            <div className="text-sm">{stub.type}</div>
             <img
               src={`/stages/${stub.stageId}.png`}
-              className="h-12 rounded  border border-neutral-700 group-aria-selected:border-neutral-400"
+              className="h-12 rounded  border border-zinc-700 group-aria-selected:border-zinc-400"
             />
             {stub.players.map((p) => (
               <div key={p.playerIndex} className="flex items-center gap-2">
@@ -130,12 +131,28 @@ function ReplayList() {
                 />
                 <div>
                   <div>{p.displayName}</div>
-                  <div className="text-sm text-neutral-400 group-aria-selected:text-neutral-600">
+                  <div className="text-sm text-zinc-400 group-aria-selected:text-zinc-600">
                     {p.connectCode}
                   </div>
                 </div>
               </div>
             ))}
+            <div className="text-sm">
+              <div>
+                {new Date(stub.startTimestamp!).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "2-digit",
+                  year: "numeric",
+                })}
+              </div>
+              <div>
+                {new Date(stub.startTimestamp!).toLocaleTimeString(undefined, {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+              </div>
+            </div>
           </ListBoxItem>
         )}
       </ListBox>
