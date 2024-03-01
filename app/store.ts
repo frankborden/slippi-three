@@ -13,12 +13,12 @@ export interface Store {
   addFiles: (files: File[]) => void;
   parseProgress: number | undefined;
   setParseProgress: (parseProgress: number | undefined) => void;
-  stubs: [ReplayStub, File][];
-  setStubs: (stubs: [ReplayStub, File][]) => void;
+  localStubs: [ReplayStub, File][];
+  setLocalStubs: (stubs: [ReplayStub, File][]) => void;
   currentPage: number;
   setCurrentPage: (currentPage: number) => void;
-  selectedStub: [ReplayStub, File] | undefined;
-  setSelectedStub: (selectedStub: [ReplayStub, File] | undefined) => void;
+  selectedStub: ReplayStub | undefined;
+  setSelectedStub: (selectedStub: ReplayStub | undefined) => void;
 
   // Viewer
   openedTimestamp: number;
@@ -39,12 +39,12 @@ export const store = create<Store>((set) => ({
   parseProgress: undefined,
   setParseProgress: (parseProgress: number | undefined) =>
     set({ parseProgress }),
-  stubs: [],
-  setStubs: (stubs: [ReplayStub, File][]) => set({ stubs }),
+  localStubs: [],
+  setLocalStubs: (stubs: [ReplayStub, File][]) => set({ localStubs: stubs }),
   currentPage: 0,
   setCurrentPage: (currentPage: number) => set({ currentPage }),
   selectedStub: undefined,
-  setSelectedStub: (selectedStub: [ReplayStub, File] | undefined) =>
+  setSelectedStub: (selectedStub: ReplayStub | undefined) =>
     set({ selectedStub }),
 
   // Viewer
@@ -65,7 +65,7 @@ if (worker) {
     if (event.data.progress !== undefined) {
       store.getState().setParseProgress(event.data.progress);
     } else {
-      store.getState().setStubs(event.data.stubs);
+      store.getState().setLocalStubs(event.data.stubs);
       store.getState().setParseProgress(undefined);
     }
   };

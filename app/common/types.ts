@@ -7,7 +7,7 @@ export type ReplayType =
 export interface ReplayStub {
   type: ReplayType;
   stageId: number;
-  startTimestamp?: string;
+  startTimestamp: string;
   players: PlayerStub[];
   matchId?: string;
   gameNumber?: number;

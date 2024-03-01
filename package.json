@@ -7,7 +7,8 @@
     "deploy": "wrangler pages deploy ./build/client",
     "dev": "remix vite:dev",
     "format": "bun x prettier --write .",
-    "start": "wrangler pages dev ./build/client"
+    "start": "wrangler pages dev ./build/client",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20240222.0",

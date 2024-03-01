@@ -24,7 +24,9 @@ import { firstVersion, readUint } from "./utils";
 /**
  * startTimestamp is not read because it's at the end of the file.
  */
-export function parseStub(raw: ArrayBufferLike): ReplayStub {
+export function parseStub(
+  raw: ArrayBufferLike,
+): Omit<ReplayStub, "startTimestamp"> {
   const rawData = new DataView(raw, 15);
   const commandPayloadSizes = parseEventPayloadsEvent(rawData, 0x00);
   const gameSettings = parseGameStartEvent(

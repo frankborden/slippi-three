@@ -48,12 +48,14 @@ function ReplayList() {
     setPaused,
     setOpenedTimestamp,
     addFiles,
-    stubs,
+    localStubs,
     currentPage,
     setCurrentPage,
     selectedStub,
     setSelectedStub,
   } = store();
+
+  const stubs = localStubs;
 
   async function openFile(files: FileList | null) {
     if (!files) return;
@@ -95,12 +97,22 @@ function ReplayList() {
         aria-label="Replays"
         selectionMode="single"
         className="flex flex-col gap-1"
-        selectedKeys={selectedStub ? [selectedStub[1].name] : []}
+        selectedKeys={
+          selectedStub
+            ? [
+                `${selectedStub.matchId ?? selectedStub.startTimestamp}~${selectedStub.gameNumber}~${selectedStub.tiebreakerNumber}`,
+              ]
+            : []
+        }
         onSelectionChange={async (keys) => {
           if (keys === "all") return;
-          const name = [...keys.values()][0];
-          const stub = stubs.find(([, file]) => file.name === name)!;
-          const { raw, metadata } = decode(await stub[1].arrayBuffer(), {
+          const id = [...keys.values()][0];
+          const [stub, file] = stubs.find(
+            ([stub]) =>
+              `${stub.matchId ?? stub.startTimestamp}~${stub.gameNumber}~${stub.tiebreakerNumber}` ===
+              id,
+          )!;
+          const { raw, metadata } = decode(await file.arrayBuffer(), {
             useTypedArrays: true,
           });
           const replay = parseReplay(metadata, raw);
@@ -114,7 +126,7 @@ function ReplayList() {
       >
         {([stub, file]) => (
           <ListBoxItem
-            id={file.name}
+            id={`${stub.matchId ?? stub.startTimestamp}~${stub.gameNumber}~${stub.tiebreakerNumber}`}
             textValue={file.name}
             className={({ isHovered, isSelected }) =>
               cn(
