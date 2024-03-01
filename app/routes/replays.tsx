@@ -49,6 +49,8 @@ function ReplayList() {
     setOpenedTimestamp,
     addFiles,
     stubs,
+    currentPage,
+    setCurrentPage,
   } = store();
 
   async function openFile(files: FileList | null) {
@@ -87,7 +89,7 @@ function ReplayList() {
         <TabPanel id="events">events</TabPanel>
       </Tabs>
       <ListBox
-        items={stubs.slice(0, 10)}
+        items={stubs.slice(currentPage * 10, currentPage * 10 + 10)}
         aria-label="Replays"
         selectionMode="single"
         className="flex flex-col gap-1"
@@ -156,6 +158,31 @@ function ReplayList() {
           </ListBoxItem>
         )}
       </ListBox>
+      <div className="mt-4 flex items-center justify-center gap-4">
+        <button
+          onClick={() => setCurrentPage(0)}
+          disabled={currentPage === 0}
+          className="i-tabler-chevron-left-pipe text-xl disabled:text-zinc-400"
+        />
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 0}
+          className="i-tabler-chevron-left text-xl disabled:text-zinc-400"
+        />
+        <div>
+          Page {currentPage + 1} of {Math.ceil(stubs.length / 10)}
+        </div>
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(stubs.length / 10) - 1}
+          className="i-tabler-chevron-right text-xl disabled:text-zinc-400"
+        />
+        <button
+          onClick={() => setCurrentPage(Math.ceil(stubs.length / 10) - 1)}
+          disabled={currentPage === Math.ceil(stubs.length / 10) - 1}
+          className="i-tabler-chevron-right-pipe text-xl disabled:text-zinc-400"
+        />
+      </div>
     </div>
   );
 }

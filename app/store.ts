@@ -15,6 +15,8 @@ export interface Store {
   setParseProgress: (parseProgress: number | undefined) => void;
   stubs: [ReplayStub, File][];
   setStubs: (stubs: [ReplayStub, File][]) => void;
+  currentPage: number;
+  setCurrentPage: (currentPage: number) => void;
 
   // Viewer
   openedTimestamp: number;
@@ -37,6 +39,8 @@ export const store = create<Store>((set) => ({
     set({ parseProgress }),
   stubs: [],
   setStubs: (stubs: [ReplayStub, File][]) => set({ stubs }),
+  currentPage: 0,
+  setCurrentPage: (currentPage: number) => set({ currentPage }),
 
   // Viewer
   openedTimestamp: Date.now(),
