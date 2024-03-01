@@ -17,6 +17,8 @@ export interface Store {
   setStubs: (stubs: [ReplayStub, File][]) => void;
   currentPage: number;
   setCurrentPage: (currentPage: number) => void;
+  selectedStub: [ReplayStub, File] | undefined;
+  setSelectedStub: (selectedStub: [ReplayStub, File] | undefined) => void;
 
   // Viewer
   openedTimestamp: number;
@@ -41,6 +43,9 @@ export const store = create<Store>((set) => ({
   setStubs: (stubs: [ReplayStub, File][]) => set({ stubs }),
   currentPage: 0,
   setCurrentPage: (currentPage: number) => set({ currentPage }),
+  selectedStub: undefined,
+  setSelectedStub: (selectedStub: [ReplayStub, File] | undefined) =>
+    set({ selectedStub }),
 
   // Viewer
   openedTimestamp: Date.now(),

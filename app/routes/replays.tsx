@@ -51,6 +51,8 @@ function ReplayList() {
     stubs,
     currentPage,
     setCurrentPage,
+    selectedStub,
+    setSelectedStub,
   } = store();
 
   async function openFile(files: FileList | null) {
@@ -93,14 +95,16 @@ function ReplayList() {
         aria-label="Replays"
         selectionMode="single"
         className="flex flex-col gap-1"
+        selectedKeys={selectedStub ? [selectedStub[1].name] : []}
         onSelectionChange={async (keys) => {
           if (keys === "all") return;
           const name = [...keys.values()][0];
-          const [, file] = stubs.find(([, file]) => file.name === name)!;
-          const { raw, metadata } = decode(await file.arrayBuffer(), {
+          const stub = stubs.find(([, file]) => file.name === name)!;
+          const { raw, metadata } = decode(await stub[1].arrayBuffer(), {
             useTypedArrays: true,
           });
           const replay = parseReplay(metadata, raw);
+          setSelectedStub(stub);
           setReplay(replay);
           setRenderData(renderReplay(replay));
           setFrame(0);
