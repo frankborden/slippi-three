@@ -1,9 +1,7 @@
 import { decode } from "@shelacek/ubjson";
-import { useState } from "react";
 import {
   Button,
   FileTrigger,
-  Key,
   Label,
   ListBox,
   ListBoxItem,
@@ -85,7 +83,7 @@ function ReplayList() {
     }
     return true;
   });
-  const pageSize = 8;
+  const pageSize = 10;
 
   async function openFile(files: FileList | null) {
     if (!files) return;
@@ -93,7 +91,7 @@ function ReplayList() {
   }
 
   return (
-    <div className="border-r border-r-zinc-700 bg-zinc-900 px-6 py-4">
+    <div className="border-r border-r-zinc-700 bg-zinc-900 px-4 py-2">
       <Tabs
         onSelectionChange={(key) => {
           setCurrentSource(key as any);
@@ -101,19 +99,19 @@ function ReplayList() {
         }}
         selectedKey={currentSource}
       >
-        <TabList className="mb-4 flex w-max gap-3 rounded-lg border border-zinc-600 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
+        <TabList className="mb-2 flex w-max gap-3 rounded-lg border border-zinc-600 p-1 text-sm *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
           <Tab id="personal">Personal</Tab>
           <Tab id="uploads">Uploads</Tab>
           <Tab id="events">Events</Tab>
         </TabList>
         <TabPanel id="personal">
-          <div className="mb-4 flex gap-4">
+          <div className="mb-2 flex gap-4 text-sm">
             <FileTrigger
               onSelect={openFile}
               acceptedFileTypes={[".slp"]}
               allowsMultiple
             >
-              <Button className="rounded bg-zinc-300 px-3 py-0.5 text-zinc-950 hover:bg-zinc-100 hover:text-black">
+              <Button className="rounded bg-zinc-300 px-2 text-zinc-950 hover:bg-zinc-100 hover:text-black">
                 Open Files
               </Button>
             </FileTrigger>
@@ -128,13 +126,12 @@ function ReplayList() {
         <TabPanel id="events">events</TabPanel>
       </Tabs>
       <TagGroup
-        className="mb-4 flex items-center gap-2"
+        className="mb-2 flex items-center gap-2"
         onRemove={(key) => {
           setFilters(filters.filter((_, i) => !key.has(String(i))));
           setCurrentPage(0);
         }}
       >
-        <Label className="text-sm">Filters</Label>
         <TagList
           items={filters.map((f, i) => [f, i] as const)}
           className="flex flex-wrap items-center gap-2"
@@ -170,7 +167,7 @@ function ReplayList() {
         )}
         aria-label="Replays"
         selectionMode="single"
-        className="flex flex-col gap-1"
+        className="mb-2 flex flex-col gap-1"
         selectedKeys={
           selectedStub
             ? [
@@ -210,10 +207,12 @@ function ReplayList() {
               )
             }
           >
-            <div className="text-sm">{stub.type}</div>
+            <div className="text-sm">
+              <div className="capitalize">{stub.type}</div>
+            </div>
             <img
               src={`/stages/${stub.stageId}.png`}
-              className="h-12 rounded  border border-zinc-700 group-aria-selected:border-zinc-400"
+              className="h-12 rounded border border-zinc-700 group-aria-selected:border-zinc-400"
             />
             {stub.players.map((p) => (
               <div key={p.playerIndex} className="flex items-center gap-2">
@@ -222,9 +221,11 @@ function ReplayList() {
                   className="size-6"
                 />
                 <div>
-                  <div>{p.displayName}</div>
+                  <div className="max-w-[10ch] overflow-x-hidden text-ellipsis whitespace-nowrap">
+                    {p.displayName ?? shortCharactersExt[p.externalCharacterId]}
+                  </div>
                   <div className="text-sm text-zinc-400 group-aria-selected:text-zinc-600">
-                    {p.connectCode}
+                    {p.connectCode ?? `Port ${p.playerIndex + 1}`}
                   </div>
                 </div>
               </div>
@@ -248,7 +249,7 @@ function ReplayList() {
           </ListBoxItem>
         )}
       </ListBox>
-      <div className="mt-4 flex items-center justify-center gap-4">
+      <div className="grid grid-cols-[auto_auto_1fr_auto_auto] items-center gap-4">
         <button
           onClick={() => setCurrentPage(0)}
           disabled={currentPage === 0}
@@ -259,7 +260,7 @@ function ReplayList() {
           disabled={currentPage === 0}
           className="i-tabler-chevron-left text-xl disabled:text-zinc-400"
         />
-        <div>
+        <div className="text-center">
           Page {currentPage + 1} of {Math.ceil(filteredStubs.length / pageSize)}
         </div>
         <button

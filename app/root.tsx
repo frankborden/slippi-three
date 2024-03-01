@@ -42,7 +42,7 @@ export default function App() {
         )}
         <RouterProvider navigate={navigate}>
           <div className="flex h-screen">
-            <nav className="grid grid-cols-[auto_1fr] border-r border-r-zinc-800 bg-zinc-950 pt-4 [grid-auto-rows:min-content]">
+            <nav className="grid grid-cols-[auto_1fr] border-r border-r-zinc-800 bg-zinc-950 pt-2 [grid-auto-rows:min-content]">
               <PageLink icon="i-tabler-home" to="/" name="Home" />
               <PageLink
                 icon="i-tabler-device-tv-old"
@@ -103,7 +103,7 @@ function PageLink({
       }
     >
       <div className={cn(icon, "text-2xl")} />
-      <div className="text">{name}</div>
+      <div className="text-sm">{name}</div>
     </NavLink>
   );
 }
