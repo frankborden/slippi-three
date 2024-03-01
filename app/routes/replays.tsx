@@ -94,7 +94,6 @@ function ReplayList() {
 
   return (
     <div className="border-r border-r-zinc-700 bg-zinc-900 px-6 py-4">
-      <div className="mb-0.5 ml-2 text-sm">Source</div>
       <Tabs
         onSelectionChange={(key) => {
           setCurrentSource(key as any);

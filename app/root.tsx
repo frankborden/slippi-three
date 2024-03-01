@@ -42,7 +42,7 @@ export default function App() {
         )}
         <RouterProvider navigate={navigate}>
           <div className="flex h-screen">
-            <nav className="flex flex-col items-center gap-8 border-r border-r-zinc-800 bg-zinc-950 p-6">
+            <nav className="grid grid-cols-[auto_1fr] border-r border-r-zinc-800 bg-zinc-950 pt-4 [grid-auto-rows:min-content]">
               <PageLink icon="i-tabler-home" to="/" name="Home" />
               <PageLink
                 icon="i-tabler-device-tv-old"
@@ -60,7 +60,6 @@ export default function App() {
                 name="Calculator"
               />
               <PageLink
-                className="mt-auto"
                 icon="i-tabler-user-circle"
                 to="account"
                 name="Account"
@@ -98,13 +97,13 @@ function PageLink({
       className={({ isActive }) =>
         cn(
           className,
-          "flex flex-col items-center gap-1 transition-colors duration-200 ease-in-out",
+          "col-span-full grid grid-cols-subgrid items-center gap-x-2 px-4 py-2 transition-colors duration-200 ease-in-out",
           !isActive && "text-zinc-400 hover:text-zinc-300",
         )
       }
     >
-      <div className={cn(icon, "text-4xl")} />
-      <div className="text-sm">{name}</div>
+      <div className={cn(icon, "text-2xl")} />
+      <div className="text">{name}</div>
     </NavLink>
   );
 }
