@@ -1,12 +1,39 @@
 import { create } from "zustand";
 
-import { RenderData, ReplayData, ReplayStub } from "~/common/types";
+import { RenderData, ReplayData, ReplayStub, ReplayType } from "~/common/types";
 import ParserWorker from "~/worker?worker";
 
 let worker: Worker | undefined;
 if (typeof document !== "undefined") {
   worker = new ParserWorker();
 }
+
+export interface CharacterFilter {
+  type: "character";
+  externalCharacterId: number;
+}
+export interface StageFilter {
+  type: "stage";
+  stageId: number;
+}
+export interface ConnectCodeFilter {
+  type: "connectCode";
+  connectCode: string;
+}
+export interface DisplayNameFilter {
+  type: "displayName";
+  displayName: string;
+}
+export interface ReplayTypeFilter {
+  type: "replayType";
+  replayType: ReplayType;
+}
+export type Filter =
+  | CharacterFilter
+  | StageFilter
+  | ConnectCodeFilter
+  | DisplayNameFilter
+  | ReplayTypeFilter;
 
 export interface Store {
   // Local files
@@ -15,6 +42,12 @@ export interface Store {
   setParseProgress: (parseProgress: number | undefined) => void;
   localStubs: [ReplayStub, File][];
   setLocalStubs: (stubs: [ReplayStub, File][]) => void;
+
+  // Selection
+  currentSource: "personal" | "uploads" | "events";
+  setCurrentSource: (currentSource: "personal" | "uploads" | "events") => void;
+  filters: Filter[];
+  setFilters: (filters: Filter[]) => void;
   currentPage: number;
   setCurrentPage: (currentPage: number) => void;
   selectedStub: ReplayStub | undefined;
@@ -41,6 +74,26 @@ export const store = create<Store>((set) => ({
     set({ parseProgress }),
   localStubs: [],
   setLocalStubs: (stubs: [ReplayStub, File][]) => set({ localStubs: stubs }),
+
+  // Selection
+  currentSource: "personal",
+  setCurrentSource: (currentSource: "personal" | "uploads" | "events") =>
+    set({ currentSource }),
+  filters: [
+    {
+      externalCharacterId: 2,
+      type: "character",
+    },
+    {
+      externalCharacterId: 20,
+      type: "character",
+    },
+    {
+      stageId: 31,
+      type: "stage",
+    },
+  ],
+  setFilters: (filters: Filter[]) => set({ filters }),
   currentPage: 0,
   setCurrentPage: (currentPage: number) => set({ currentPage }),
   selectedStub: undefined,

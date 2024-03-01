@@ -4,17 +4,22 @@ import {
   Button,
   FileTrigger,
   Key,
+  Label,
   ListBox,
   ListBoxItem,
   Tab,
   TabList,
   TabPanel,
   Tabs,
+  Tag,
+  TagGroup,
+  TagList,
 } from "react-aria-components";
 import { twMerge as cn } from "tailwind-merge";
 
+import { shortCharactersExt, stages } from "~/common/names";
 import { parseReplay } from "~/parser";
-import { store } from "~/store";
+import { CharacterFilter, StageFilter, store } from "~/store";
 import { Controls } from "~/viewer/Controls";
 import { Replay } from "~/viewer/Replay";
 import { renderReplay } from "~/viewer/render";
@@ -40,7 +45,6 @@ export default function Page() {
 }
 
 function ReplayList() {
-  const [source, setSource] = useState<Key>("personal");
   const {
     setRenderData,
     setReplay,
@@ -53,9 +57,35 @@ function ReplayList() {
     setCurrentPage,
     selectedStub,
     setSelectedStub,
+    currentSource,
+    setCurrentSource,
+    filters,
+    setFilters,
   } = store();
 
   const stubs = localStubs;
+  const filteredStubs = stubs.filter(([stub]) => {
+    const allowedStages = filters
+      .filter((f): f is StageFilter => f.type === "stage")
+      .map((f) => f.stageId);
+    if (allowedStages.length > 0 && !allowedStages.includes(stub.stageId)) {
+      return false;
+    }
+
+    const requiredCharacters = filters
+      .filter((f): f is CharacterFilter => f.type === "character")
+      .map((f) => f.externalCharacterId);
+    if (
+      requiredCharacters.length > 0 &&
+      requiredCharacters.some(
+        (c) => !stub.players.some((p) => p.externalCharacterId === c),
+      )
+    ) {
+      return false;
+    }
+    return true;
+  });
+  const pageSize = 8;
 
   async function openFile(files: FileList | null) {
     if (!files) return;
@@ -65,7 +95,10 @@ function ReplayList() {
   return (
     <div className="border-r border-r-zinc-700 bg-zinc-900 px-6 py-4">
       <div className="mb-0.5 ml-2 text-sm">Source</div>
-      <Tabs onSelectionChange={setSource} selectedKey={source}>
+      <Tabs
+        onSelectionChange={(key) => setCurrentSource(key as any)}
+        selectedKey={currentSource}
+      >
         <TabList className="mb-4 flex w-max gap-3 rounded-lg border border-zinc-600 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
           <Tab id="personal">Personal</Tab>
           <Tab id="uploads">Uploads</Tab>
@@ -92,8 +125,46 @@ function ReplayList() {
         <TabPanel id="uploads">uploads</TabPanel>
         <TabPanel id="events">events</TabPanel>
       </Tabs>
+      <TagGroup
+        className="mb-4 flex items-center gap-2"
+        onRemove={(key) =>
+          setFilters(filters.filter((_, i) => !key.has(String(i))))
+        }
+      >
+        <Label className="text-sm">Filters</Label>
+        <TagList
+          items={filters.map((f, i) => [f, i] as const)}
+          className="flex flex-wrap items-center gap-2"
+        >
+          {([filter, i]) => (
+            <Tag
+              id={String(i)}
+              textValue={String(
+                filter.type === "character"
+                  ? shortCharactersExt[filter.externalCharacterId]
+                  : filter.type === "stage"
+                    ? stages[filter.stageId]
+                    : "crst",
+              )}
+              className="flex items-center gap-1 rounded border px-1 text-sm transition-colors duration-200 has-[button:hover]:bg-zinc-700 focus:outline-none"
+            >
+              <div>
+                {filter.type === "character"
+                  ? shortCharactersExt[filter.externalCharacterId]
+                  : filter.type === "stage"
+                    ? stages[filter.stageId]
+                    : "crst"}
+              </div>
+              <Button slot="remove" className="i-tabler-x" />
+            </Tag>
+          )}
+        </TagList>
+      </TagGroup>
       <ListBox
-        items={stubs.slice(currentPage * 10, currentPage * 10 + 10)}
+        items={filteredStubs.slice(
+          currentPage * pageSize,
+          currentPage * pageSize + pageSize,
+        )}
         aria-label="Replays"
         selectionMode="single"
         className="flex flex-col gap-1"
@@ -107,7 +178,7 @@ function ReplayList() {
         onSelectionChange={async (keys) => {
           if (keys === "all") return;
           const id = [...keys.values()][0];
-          const [stub, file] = stubs.find(
+          const [stub, file] = filteredStubs.find(
             ([stub]) =>
               `${stub.matchId ?? stub.startTimestamp}~${stub.gameNumber}~${stub.tiebreakerNumber}` ===
               id,
@@ -186,16 +257,22 @@ function ReplayList() {
           className="i-tabler-chevron-left text-xl disabled:text-zinc-400"
         />
         <div>
-          Page {currentPage + 1} of {Math.ceil(stubs.length / 10)}
+          Page {currentPage + 1} of {Math.ceil(filteredStubs.length / pageSize)}
         </div>
         <button
           onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === Math.ceil(stubs.length / 10) - 1}
+          disabled={
+            currentPage === Math.ceil(filteredStubs.length / pageSize) - 1
+          }
           className="i-tabler-chevron-right text-xl disabled:text-zinc-400"
         />
         <button
-          onClick={() => setCurrentPage(Math.ceil(stubs.length / 10) - 1)}
-          disabled={currentPage === Math.ceil(stubs.length / 10) - 1}
+          onClick={() =>
+            setCurrentPage(Math.ceil(filteredStubs.length / pageSize) - 1)
+          }
+          disabled={
+            currentPage === Math.ceil(filteredStubs.length / pageSize) - 1
+          }
           className="i-tabler-chevron-right-pipe text-xl disabled:text-zinc-400"
         />
       </div>

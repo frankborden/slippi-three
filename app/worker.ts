@@ -48,7 +48,7 @@ self.onmessage = async (event) => {
         const date = `${fileMatch[1]}-${fileMatch[2]}-${fileMatch[3]}T${fileMatch[4]}:${fileMatch[5]}:${fileMatch[6]}`;
         startTimestamp = date;
       } else {
-        // the file name has been changed, so we must use the whole file.
+        // the file name has been changed, so we must read the whole file.
         const { raw, metadata } = decode(await file.arrayBuffer(), {
           useTypedArrays: true,
         });
@@ -61,11 +61,7 @@ self.onmessage = async (event) => {
     self.postMessage({ progress: 100 * ((i + 1) / event.data.length) });
   }
   stubs.sort((a, b) => {
-    if (
-      a[0].startTimestamp &&
-      b[0].startTimestamp &&
-      a[0].startTimestamp < b[0].startTimestamp
-    ) {
+    if (a[0].startTimestamp < b[0].startTimestamp) {
       return 1;
     }
     return -1;
