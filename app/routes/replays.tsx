@@ -130,9 +130,10 @@ function ReplayList() {
       </Tabs>
       <TagGroup
         className="mb-4 flex items-center gap-2"
-        onRemove={(key) =>
-          setFilters(filters.filter((_, i) => !key.has(String(i))))
-        }
+        onRemove={(key) => {
+          setFilters(filters.filter((_, i) => !key.has(String(i))));
+          setCurrentPage(0);
+        }}
       >
         <Label className="text-sm">Filters</Label>
         <TagList
