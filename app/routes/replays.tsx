@@ -96,7 +96,10 @@ function ReplayList() {
     <div className="border-r border-r-zinc-700 bg-zinc-900 px-6 py-4">
       <div className="mb-0.5 ml-2 text-sm">Source</div>
       <Tabs
-        onSelectionChange={(key) => setCurrentSource(key as any)}
+        onSelectionChange={(key) => {
+          setCurrentSource(key as any);
+          setCurrentPage(0);
+        }}
         selectedKey={currentSource}
       >
         <TabList className="mb-4 flex w-max gap-3 rounded-lg border border-zinc-600 p-2 *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
