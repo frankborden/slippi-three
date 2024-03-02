@@ -5,7 +5,11 @@ import reactAria from "tailwindcss-react-aria-components";
 export default {
   content: ["./app/**/*.{ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Atkinson Hyperlegible", "sans-serif"],
+      },
+    },
   },
   plugins: [
     reactAria(),

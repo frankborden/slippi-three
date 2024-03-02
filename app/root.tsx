@@ -1,3 +1,4 @@
+import "@fontsource/atkinson-hyperlegible";
 import {
   Links,
   Meta,

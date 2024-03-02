@@ -13,6 +13,7 @@
   "dependencies": {
     "@cloudflare/workers-types": "^4.20240222.0",
     "@egoist/tailwindcss-icons": "^1.7.4",
+    "@fontsource/atkinson-hyperlegible": "^5.0.18",
     "@iconify/json": "^2.2.188",
     "@react-three/drei": "^9.99.5",
     "@react-three/fiber": "^8.15.16",
