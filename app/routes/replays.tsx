@@ -31,7 +31,7 @@ export default function Page() {
 
   return (
     <div className="flex grow">
-      <div className="flex w-[445px] flex-col gap-3 border-r border-r-zinc-700 bg-zinc-900 px-4 py-2">
+      <div className="flex w-[445px] flex-col items-center gap-3 border-r border-r-zinc-700 bg-zinc-900 px-4 py-2">
         <Sources />
         <Filters />
         <Replays />
@@ -188,7 +188,7 @@ function Replays() {
         )}
         aria-label="Replays"
         selectionMode="single"
-        className="-ml-2 grid grid-cols-[repeat(5,auto)] gap-x-2 gap-y-1"
+        className="-ml-2 grid w-full grid-cols-[repeat(5,auto)] gap-x-2 gap-y-1"
         selectedKeys={
           selectedStub
             ? [
@@ -234,14 +234,14 @@ function Replays() {
                 {stub.type}
               </Tooltip>
             </TooltipTrigger>
-            <div className="text-sm">
+            <div>
               <div>
                 {new Date(stub.startTimestamp!).toLocaleDateString(undefined, {
                   day: "2-digit",
                   month: "short",
                 })}
               </div>
-              <div className="text-zinc-400">
+              <div className="text-sm text-zinc-400 group-aria-selected:text-zinc-600">
                 {new Date(stub.startTimestamp!).toLocaleTimeString(undefined, {
                   minute: "2-digit",
                   hour: "numeric",
@@ -271,37 +271,40 @@ function Replays() {
           </ListBoxItem>
         )}
       </ListBox>
-      <div className="grid grid-cols-[auto_auto_1fr_auto_auto] items-center gap-4">
-        <button
-          onClick={() => setCurrentPage(0)}
-          disabled={currentPage === 0}
-          className="i-tabler-chevron-left-pipe text-xl disabled:text-zinc-400"
-        />
-        <button
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 0}
-          className="i-tabler-chevron-left text-xl disabled:text-zinc-400"
-        />
-        <div className="text-center">
-          Page {currentPage + 1} of {Math.ceil(filteredStubs.length / pageSize)}
+      {filteredStubs.length > 0 && (
+        <div className="mt-auto grid w-full grid-cols-[auto_auto_1fr_auto_auto] items-center gap-4">
+          <button
+            onClick={() => setCurrentPage(0)}
+            disabled={currentPage === 0}
+            className="i-tabler-chevron-left-pipe text-xl disabled:text-zinc-400"
+          />
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 0}
+            className="i-tabler-chevron-left text-xl disabled:text-zinc-400"
+          />
+          <div className="text-center">
+            Page {currentPage + 1} of{" "}
+            {Math.ceil(filteredStubs.length / pageSize)}
+          </div>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={
+              currentPage === Math.ceil(filteredStubs.length / pageSize) - 1
+            }
+            className="i-tabler-chevron-right text-xl disabled:text-zinc-400"
+          />
+          <button
+            onClick={() =>
+              setCurrentPage(Math.ceil(filteredStubs.length / pageSize) - 1)
+            }
+            disabled={
+              currentPage === Math.ceil(filteredStubs.length / pageSize) - 1
+            }
+            className="i-tabler-chevron-right-pipe text-xl disabled:text-zinc-400"
+          />
         </div>
-        <button
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={
-            currentPage === Math.ceil(filteredStubs.length / pageSize) - 1
-          }
-          className="i-tabler-chevron-right text-xl disabled:text-zinc-400"
-        />
-        <button
-          onClick={() =>
-            setCurrentPage(Math.ceil(filteredStubs.length / pageSize) - 1)
-          }
-          disabled={
-            currentPage === Math.ceil(filteredStubs.length / pageSize) - 1
-          }
-          className="i-tabler-chevron-right-pipe text-xl disabled:text-zinc-400"
-        />
-      </div>
+      )}
     </>
   );
 }
