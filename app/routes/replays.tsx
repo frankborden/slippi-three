@@ -428,7 +428,7 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           id="dPad"
           fill="gray"
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           d="M202 370.4c0-1.5-1.2-2.7-2.6-2.7h-20.8a2.7 2.7 0 0 0-2.7 2.7v27.9h-28a2.7 2.7 0 0 0-2.6 2.7v20.8c0 1.5 1.2 2.7 2.7 2.7h27.9v27.9c0 1.5 1.2 2.7 2.7 2.7h20.8c1.5 0 2.7-1.2 2.7-2.7v-28H230c1.5 0 2.7-1.1 2.7-2.6V401c0-1.5-1.2-2.7-2.7-2.7h-28z"
         />
         <path
@@ -446,7 +446,7 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           id="controlStickGate"
           fill="lightgray"
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           cx={104.7}
           cy={274.5}
           r={69.1}
@@ -455,7 +455,7 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           id="controlStick"
           fill="gray"
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           cx={104.7 + (inputs.processed.joystickX ?? 0) * 34}
           cy={274.5 - (inputs.processed.joystickY ?? 0) * 34}
           r={35.1}
@@ -469,7 +469,7 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           id="cStickGate"
           fill="gold"
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           cx={395.2}
           cy={411.6}
           r={44.1}
@@ -478,7 +478,7 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           id="cStick"
           fill="yellow"
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           cx={395.2 + (inputs.processed.cStickX ?? 0) * 19.5}
           cy={411.6 - (inputs.processed.cStickY ?? 0) * 19.5}
           r={24.6}
@@ -487,7 +487,7 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           id="startButton"
           fill={inputs.processed.start ? "white" : "gray"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           cx="292.9"
           cy="271.9"
           r="13.7"
@@ -503,7 +503,7 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           // whenever physical Z is pressed
           fill={inputs.physical.a ? "white" : "green"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           cx={479.4}
           cy={279.7}
           r={33.9}
@@ -512,42 +512,42 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           id="bButton"
           fill={inputs.processed.b ? "white" : "red"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           d="M417.1 291.3c-2-.8-4.2-1.2-6.5-1.4l-1.6-.2a23 23 0 0 0 0 45.9 22.9 22.9 0 0 0 8.1-44.3z"
         />
         <path
           id="yButton"
           fill={inputs.processed.y ? "white" : "gray"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           d="M429.3 229.8a16 16 0 0 0 15.4 4.7c.5-.1 2.3-1 3.7-1.8 3.7-2.1 8.9-5 14.4-6.5 6.7-1.8 15.9-2 19.5-2h.6c3.8-1.1 7-3.6 9-7.1l.2-.3a15.4 15.4 0 0 0-13.9-22.9 17 17 0 0 0-3.9.5l-.8.1c-17 4-17 4-35.6 9.6l-1.2.4a15.6 15.6 0 0 0-11 19 15 15 0 0 0 3.6 6.3zM565.1 278c-4-17-4-17-9.6-35.7l-.3-1a15.8 15.8 0 0 0-19-11 15.5 15.5 0 0 0-9.6 7.5 15.5 15.5 0 0 0-1.4 11.5c.1.5 1.1 2.2 1.9 3.6 2 3.8 4.9 9 6.4 14.4 2 7.4 2 17.8 2 20.1a16 16 0 0 0 19 10.6c8-2.2 12.9-10.6 10.9-19.1zM130 150l-75 35v-10c0-55 55-55 75-35v10zm330 0 75 35v-10c0-55-55-55-75-35v10z"
         />
         <path
           id="xButton"
           fill={inputs.processed.x ? "white" : "gray"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           d="M565.1,278 c -4,-16.9 -4,-16.9 -9.6,-35.6 l -0.3,-1 c -2.2,-8.2 -10.9,-13.3 -19.1,-11.1 -2.1,0.6 -4,1.6 -5.6,2.8 -1.6,1.3 -3,2.9 -4,4.7 -1.9,3.4 -2.5,7.5 -1.4,11.5 0.1,0.5 1.1,2.2 1.9,3.6 2.1,3.8 4.9,8.9 6.4,14.4 2,7.4 2,17.8 2.0,20.1 0.7,2.4 2,4.4 3.7,6.1 1.5,1.6 3.3,2.8 5.4,3.7 3.1,1.3 6.5,1.7 9.9,0.8 8.1,-2.2 12.9,-10.6 10.9,-19.1 z"
         />
         <path
           id="lTrigger"
           fill={inputs.processed.lTriggerDigital ? "white" : "gray"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           d="m 130,150 l -75,35 l 0,-10 c 0,-55 55,-55 75,-35 l 0,10 z"
         />
         <path
           id="rTrigger"
           fill={inputs.processed.rTriggerDigital ? "white" : "gray"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           d="m 460,150 l 75,35 l 0,-10 c 0,-55 -55,-55 -75,-35 l 0,10 z"
         />
         <path
           id="zButton"
           fill={inputs.processed.z ? "white" : "purple"}
           stroke="black"
-          stroke-width={2.5}
+          strokeWidth={2.5}
           d="M460 155v-15l75 35v15z"
         />
       </svg>
