@@ -551,8 +551,17 @@ function Controller({ playerIndex }: { playerIndex: number }) {
           d="M460 155v-15l75 35v15z"
         />
       </svg>
-      <div>
-        {player.animationName} [{player.animationFrame}]
+      <div className="grid grid-cols-[auto_1fr] gap-x-2">
+        <div>{player.animationFrame}</div>
+        <div>{player.animationName}</div>
+        <div>
+          {player.playerState.isInHitstun
+            ? player.playerState.hitstunRemaining
+            : 0}
+        </div>
+        <div>Hitstun</div>
+        <div>{player.playerState.hitlagRemaining}</div>
+        <div>Hitlag</div>
       </div>
     </div>
   );
