@@ -28,7 +28,7 @@ export default function Page() {
 
   return (
     <div className="flex grow">
-      <div className="border-r border-r-zinc-700 bg-zinc-900 px-4 py-2">
+      <div className="flex flex-col gap-3 border-r border-r-zinc-700 bg-zinc-900 px-4 py-2">
         <Sources />
         <Filters />
         <Replays />
@@ -58,13 +58,13 @@ function Sources() {
       }}
       selectedKey={currentSource}
     >
-      <TabList className="mb-2 flex w-max gap-3 rounded-lg border border-zinc-600 p-1 text-sm *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
+      <TabList className="mb-3 flex w-max gap-3 rounded-lg border border-zinc-600 p-1 text-sm *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
         <Tab id="personal">Personal</Tab>
         <Tab id="uploads">Uploads</Tab>
         <Tab id="events">Events</Tab>
       </TabList>
       <TabPanel id="personal">
-        <div className="mb-2 flex gap-4 text-sm">
+        <div className="flex gap-4 text-sm">
           <FileTrigger
             onSelect={(files: FileList | null) => {
               if (!files) return;
@@ -101,7 +101,7 @@ function Filters() {
 
   return (
     <TagGroup
-      className="mb-2 flex items-center gap-2"
+      className="flex items-center gap-2"
       onRemove={(key) => {
         setFilters(filters.filter((_, i) => !key.has(String(i))));
         setCurrentPage(0);
@@ -185,7 +185,7 @@ function Replays() {
         )}
         aria-label="Replays"
         selectionMode="single"
-        className="mb-2 flex flex-col gap-1"
+        className="grid grid-cols-[repeat(5,auto)] gap-x-4 gap-y-1"
         selectedKeys={
           selectedStub
             ? [
@@ -219,7 +219,7 @@ function Replays() {
             textValue={file.name}
             className={({ isHovered, isSelected }) =>
               cn(
-                "group flex items-center gap-6 rounded px-4 py-2 focus:outline-none",
+                "group col-span-full grid grid-cols-subgrid items-center rounded px-3 py-2 focus:outline-none",
                 isHovered && "cursor-pointer bg-zinc-700",
                 isSelected && "bg-zinc-300 text-zinc-950",
               )

@@ -13,6 +13,9 @@ export function Camera() {
           x: playerState.xPosition,
           y: playerState.yPosition,
         }));
+      if (focusPoints.length === 0) {
+        focusPoints.push({ x: 0, y: 0 });
+      }
       let minX = Infinity;
       let maxX = -Infinity;
       let minY = Infinity;
@@ -27,7 +30,8 @@ export function Camera() {
       const midY = (minY + maxY) / 2;
       const width = Math.max(100, maxX - minX + 20);
       const height = Math.max(120, maxY - minY + 20);
-      const aspect = 16 / 9;
+      // const aspect = 16 / 9;
+      const aspect = 73 / 60;
       const targetWidth = Math.max(width, height * aspect);
       const targetHeight = targetWidth / aspect;
       const cam = camera as OrthographicCamera;

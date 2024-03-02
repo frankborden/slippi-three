@@ -12,7 +12,7 @@ export function Replay() {
       <Canvas
         orthographic
         camera={{ position: [0, 0, 100] }}
-        className="aspect-video shrink"
+        className="aspect-[73/60] shrink"
       >
         <Scene />
       </Canvas>
