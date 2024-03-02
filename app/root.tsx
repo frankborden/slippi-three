@@ -103,7 +103,7 @@ function PageLink({
       }
     >
       <div className={cn(icon, "text-2xl")} />
-      <div className="text-sm">{name}</div>
+      <div className="whitespace-nowrap text-sm">{name}</div>
     </NavLink>
   );
 }
