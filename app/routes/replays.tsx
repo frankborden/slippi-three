@@ -168,6 +168,7 @@ function Replays() {
     currentPage,
     setSelectedStub,
     selectedStub,
+    setSpeed,
     filters,
     setCurrentPage,
     setHighlights,
@@ -230,6 +231,7 @@ function Replays() {
           setRenderData(renderReplay(replay));
           setFrame(0);
           setPaused(false);
+          setSpeed(1);
           setOpenedTimestamp(Date.now());
           setHighlights(
             Object.fromEntries(

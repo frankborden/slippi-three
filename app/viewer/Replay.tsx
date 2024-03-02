@@ -21,12 +21,25 @@ export function Replay() {
   );
 }
 
+let halfTicked = false;
+
 function Scene() {
   const { replay } = store();
   useFrame(() => {
-    const { frame, setFrame, paused } = store.getState();
+    const { frame, setFrame, paused, speed } = store.getState();
     if (replay && !paused) {
-      setFrame(frame === replay.frames.length - 1 ? 0 : frame + 1);
+      let tickAmount = speed;
+      if (tickAmount === 0.5) {
+        if (halfTicked) {
+          halfTicked = false;
+          return;
+        }
+        halfTicked = true;
+        tickAmount = 1;
+      } else {
+        halfTicked = false;
+      }
+      setFrame(frame === replay.frames.length - 1 ? 0 : frame + tickAmount);
     }
   }, -2);
   const characterIds =

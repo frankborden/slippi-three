@@ -66,6 +66,8 @@ export interface Store {
   setRenderData: (renderData: RenderData[][]) => void;
   paused: boolean;
   setPaused: (paused: boolean) => void;
+  speed: number;
+  setSpeed: (speed: number) => void;
 
   // Highlights
   highlights: Record<string, Highlight[]>;
@@ -117,6 +119,8 @@ export const store = create<Store>((set) => ({
   setRenderData: (renderData: RenderData[][]) => set({ renderData }),
   paused: false,
   setPaused: (paused: boolean) => set({ paused }),
+  speed: 1,
+  setSpeed: (speed: number) => set({ speed }),
 
   // Highlights
   highlights: Object.fromEntries(
