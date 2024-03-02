@@ -1,9 +1,13 @@
 import { decode } from "@shelacek/ubjson";
+import { useState } from "react";
 import {
   Button,
   FileTrigger,
   ListBox,
   ListBoxItem,
+  Popover,
+  Select,
+  SelectValue,
   Tab,
   TabList,
   TabPanel,
@@ -19,6 +23,8 @@ import { twMerge as cn } from "tailwind-merge";
 import { shortCharactersExt, stages } from "~/common/names";
 import { ReplayType } from "~/common/types";
 import { parseReplay } from "~/parser";
+import { queries } from "~/search/queries";
+import { search } from "~/search/search";
 import { CharacterFilter, StageFilter, store } from "~/store";
 import { Controls } from "~/viewer/Controls";
 import { Replay } from "~/viewer/Replay";
@@ -27,7 +33,15 @@ import { renderReplay } from "~/viewer/render";
 const pageSize = 10;
 
 export default function Page() {
-  const { openedTimestamp, replay } = store();
+  const {
+    openedTimestamp,
+    replay,
+    highlights: allHighlights,
+    setFrame,
+  } = store();
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    Object.entries(allHighlights)[0][0],
+  );
 
   return (
     <div className="flex grow">
@@ -46,6 +60,50 @@ export default function Page() {
           </>
         )}
       </div>
+      <div className="w-[190px] border-l border-l-zinc-700 px-4 py-2">
+        <Select
+          aria-label="Highlights category"
+          selectedKey={selectedCategory}
+          onSelectionChange={(key) => setSelectedCategory(key as string)}
+          className="rounded border border-zinc-700 bg-black px-2 py-0.5 text-sm"
+        >
+          <Button className="flex w-full items-center justify-between gap-1">
+            <SelectValue />
+            <div aria-hidden="true" className="i-tabler-chevron-down text-xl" />
+          </Button>
+          <Popover
+            offset={0}
+            className="w-[--trigger-width] rounded border border-zinc-700 bg-zinc-950 px-2 py-0.5 text-sm"
+          >
+            <ListBox items={Object.entries(allHighlights)}>
+              {([name]) => <ListBoxItem id={name}>{name}</ListBoxItem>}
+            </ListBox>
+          </Popover>
+        </Select>
+        <ListBox
+          items={allHighlights[selectedCategory]}
+          aria-label="Highlights"
+          selectionMode="single"
+          selectedKeys={[]}
+          onSelectionChange={(keys) => {
+            if (keys === "all" || keys.size === 0) return;
+            const key = [...keys.values()][0] as string;
+            setFrame(Math.max(0, Number(key.split("-")[1]) - 30));
+          }}
+          className="mt-2"
+        >
+          {(highlight) => (
+            <ListBoxItem
+              id={`${highlight.playerIndex}-${highlight.startFrame}-${highlight.endFrame}`}
+              textValue={`Player ${highlight.playerIndex + 1}: ${highlight.startFrame}-${highlight.endFrame}`}
+              className="rounded px-2 py-0.5 text-sm hover:cursor-pointer hover:bg-zinc-700 hover:text-zinc-100 focus:outline-none"
+            >
+              Player {highlight.playerIndex + 1}: {highlight.startFrame}-
+              {highlight.endFrame}
+            </ListBoxItem>
+          )}
+        </ListBox>
+      </div>
     </div>
   );
 }
@@ -61,7 +119,7 @@ function Sources() {
       }}
       selectedKey={currentSource}
     >
-      <TabList className="mb-3 flex w-max gap-3 rounded-lg border border-zinc-600 p-1 text-sm *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
+      <TabList className="mb-3 flex w-max gap-3 rounded-lg border border-zinc-600 bg-zinc-950 p-1 text-sm *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
         <Tab id="personal">Personal</Tab>
         <Tab id="uploads">Uploads</Tab>
         <Tab id="events">Events</Tab>
@@ -104,6 +162,7 @@ function Filters() {
 
   return (
     <TagGroup
+      aria-label="Filters"
       className="flex items-center gap-2"
       onRemove={(key) => {
         setFilters(filters.filter((_, i) => !key.has(String(i))));
@@ -154,6 +213,7 @@ function Replays() {
     selectedStub,
     filters,
     setCurrentPage,
+    setHighlights,
   } = store();
 
   const stubs = localStubs;
@@ -214,6 +274,14 @@ function Replays() {
           setFrame(0);
           setPaused(false);
           setOpenedTimestamp(Date.now());
+          setHighlights(
+            Object.fromEntries(
+              Object.entries(queries).map(([name, query]) => [
+                name,
+                search(replay, ...query),
+              ]),
+            ),
+          );
         }}
       >
         {([stub, file]) => (

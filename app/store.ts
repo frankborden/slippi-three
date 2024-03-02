@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 import { RenderData, ReplayData, ReplayStub, ReplayType } from "~/common/types";
+import { queries } from "~/search/queries";
+import { Highlight } from "~/search/search";
 import ParserWorker from "~/worker?worker";
 
 let worker: Worker | undefined;
@@ -64,6 +66,10 @@ export interface Store {
   setRenderData: (renderData: RenderData[][]) => void;
   paused: boolean;
   setPaused: (paused: boolean) => void;
+
+  // Highlights
+  highlights: Record<string, Highlight[]>;
+  setHighlights: (highlights: Record<string, Highlight[]>) => void;
 }
 
 export const store = create<Store>((set) => ({
@@ -111,6 +117,13 @@ export const store = create<Store>((set) => ({
   setRenderData: (renderData: RenderData[][]) => set({ renderData }),
   paused: false,
   setPaused: (paused: boolean) => set({ paused }),
+
+  // Highlights
+  highlights: Object.fromEntries(
+    Object.entries(queries).map(([name]) => [name, []]),
+  ),
+  setHighlights: (highlights: Record<string, Highlight[]>) =>
+    set({ highlights }),
 }));
 
 if (worker) {
