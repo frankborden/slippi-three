@@ -11,10 +11,13 @@ import {
   Tag,
   TagGroup,
   TagList,
+  Tooltip,
+  TooltipTrigger,
 } from "react-aria-components";
 import { twMerge as cn } from "tailwind-merge";
 
 import { shortCharactersExt, stages } from "~/common/names";
+import { ReplayType } from "~/common/types";
 import { parseReplay } from "~/parser";
 import { CharacterFilter, StageFilter, store } from "~/store";
 import { Controls } from "~/viewer/Controls";
@@ -28,7 +31,7 @@ export default function Page() {
 
   return (
     <div className="flex grow">
-      <div className="flex flex-col gap-3 border-r border-r-zinc-700 bg-zinc-900 px-4 py-2">
+      <div className="flex w-[445px] flex-col gap-3 border-r border-r-zinc-700 bg-zinc-900 px-4 py-2">
         <Sources />
         <Filters />
         <Replays />
@@ -185,7 +188,7 @@ function Replays() {
         )}
         aria-label="Replays"
         selectionMode="single"
-        className="grid grid-cols-[repeat(5,auto)] gap-x-4 gap-y-1"
+        className="-ml-2 grid grid-cols-[repeat(5,auto)] gap-x-2 gap-y-1"
         selectedKeys={
           selectedStub
             ? [
@@ -225,8 +228,25 @@ function Replays() {
               )
             }
           >
+            <TooltipTrigger delay={300} closeDelay={50}>
+              <Button className={cn(replayTypeIcons[stub.type], "text-2xl")} />
+              <Tooltip className="rounded border border-zinc-700 bg-zinc-950 px-2 py-0.5 text-sm capitalize">
+                {stub.type}
+              </Tooltip>
+            </TooltipTrigger>
             <div className="text-sm">
-              <div className="capitalize">{stub.type}</div>
+              <div>
+                {new Date(stub.startTimestamp!).toLocaleDateString(undefined, {
+                  day: "2-digit",
+                  month: "short",
+                })}
+              </div>
+              <div className="text-zinc-400">
+                {new Date(stub.startTimestamp!).toLocaleTimeString(undefined, {
+                  minute: "2-digit",
+                  hour: "numeric",
+                })}
+              </div>
             </div>
             <img
               src={`/stages/${stub.stageId}.png`}
@@ -239,7 +259,7 @@ function Replays() {
                   className="size-6"
                 />
                 <div>
-                  <div className="max-w-[10ch] overflow-x-hidden text-ellipsis whitespace-nowrap">
+                  <div className="max-w-[8ch] overflow-x-hidden text-ellipsis whitespace-nowrap">
                     {p.displayName ?? shortCharactersExt[p.externalCharacterId]}
                   </div>
                   <div className="text-sm text-zinc-400 group-aria-selected:text-zinc-600">
@@ -248,22 +268,6 @@ function Replays() {
                 </div>
               </div>
             ))}
-            <div className="text-sm">
-              <div>
-                {new Date(stub.startTimestamp!).toLocaleDateString(undefined, {
-                  month: "short",
-                  day: "2-digit",
-                  year: "numeric",
-                })}
-              </div>
-              <div>
-                {new Date(stub.startTimestamp!).toLocaleTimeString(undefined, {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                })}
-              </div>
-            </div>
           </ListBoxItem>
         )}
       </ListBox>
@@ -301,3 +305,11 @@ function Replays() {
     </>
   );
 }
+
+const replayTypeIcons: Record<ReplayType, string> = {
+  direct: "i-tabler-plug-connected",
+  offline: "i-tabler-sofa",
+  "old online": "i-tabler-world",
+  ranked: "i-tabler-trophy",
+  unranked: "i-tabler-balloon",
+};
