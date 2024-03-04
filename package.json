@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "bindings": "wrangler types",
     "build": "remix vite:build",
     "deploy": "wrangler pages deploy ./build/client",
     "dev": "remix vite:dev",
