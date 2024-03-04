@@ -1,4 +1,13 @@
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData,
+} from "@remix-run/cloudflare";
+import { useFetcher } from "@remix-run/react";
 import { decode } from "@shelacek/ubjson";
+import { drizzle } from "drizzle-orm/d1";
 import { useState } from "react";
 import {
   Button,
@@ -23,6 +32,7 @@ import { twMerge as cn } from "tailwind-merge";
 import { shortCharactersExt, stages } from "~/common/names";
 import { ReplayType } from "~/common/types";
 import { parseReplay } from "~/parser";
+import { replays as replaysSchema } from "~/schema";
 import { queries } from "~/search/queries";
 import { search } from "~/search/search";
 import { CharacterFilter, StageFilter, store } from "~/store";
@@ -32,8 +42,46 @@ import { renderReplay } from "~/viewer/render";
 
 const pageSize = 10;
 
+export async function loader({ context }: LoaderFunctionArgs) {
+  const db = drizzle(context.cloudflare.env.DB);
+  const replays = await db.select().from(replaysSchema);
+  return json({
+    replays,
+  });
+}
+
+export async function action({ context, request }: ActionFunctionArgs) {
+  const uploadHandler = unstable_createMemoryUploadHandler({
+    maxPartSize: 20_000_000,
+  });
+  const form = await unstable_parseMultipartFormData(request, uploadHandler);
+
+  const file = form.get("replay");
+  if (!(file instanceof File)) {
+    return new Response("No file found", { status: 400 });
+  }
+  const buffer = new Uint8Array(await file.arrayBuffer());
+  const { raw, metadata } = decode(buffer, { useTypedArrays: true });
+  const replay = parseReplay(metadata, raw);
+
+  return json({
+    settings: replay.settings,
+  });
+}
+
 export default function Page() {
   const { openedTimestamp, replay } = store();
+  const fetcher = useFetcher({ key: "uploadReplay" });
+  const { selectedStub, localStubs } = store();
+
+  function upload() {
+    const form = new FormData();
+    const file = localStubs.find(([stub]) => stub === selectedStub)?.[1];
+    if (file) {
+      form.append("replay", file);
+      fetcher.submit(form, { method: "POST", encType: "multipart/form-data" });
+    }
+  }
 
   return (
     <div className="flex grow">
@@ -45,6 +93,7 @@ export default function Page() {
       <div className="flex grow flex-col bg-zinc-800 p-4">
         {replay && (
           <>
+            <button onClick={() => upload()}>Upload</button>
             <div className="relative flex flex-col overflow-y-auto rounded border border-zinc-700 bg-zinc-950">
               <Replay key={openedTimestamp} />
             </div>
