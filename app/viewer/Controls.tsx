@@ -61,17 +61,13 @@ export function Controls() {
 
   return (
     <Slider
+      aria-label="Frame"
       value={frame}
       minValue={0}
       maxValue={replay?.frames.length ?? 10}
       onChange={(f) => setFrame(f)}
       className="mx-2"
     >
-      <div className="flex items-baseline gap-1">
-        <Label>Frame</Label>
-        <SliderOutput />
-      </div>
-
       <div className="flex items-center gap-2">
         <SliderTrack className="relative h-4 w-full">
           {({ state }) => (

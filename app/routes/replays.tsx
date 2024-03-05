@@ -7,7 +7,7 @@ import {
 } from "@remix-run/cloudflare";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import { decode } from "@shelacek/ubjson";
-import { InferInsertModel, SQL, or } from "drizzle-orm";
+import { InferInsertModel } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { generateSlug } from "random-word-slugs";
 import { useState } from "react";
