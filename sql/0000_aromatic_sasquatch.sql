@@ -20,7 +20,7 @@ CREATE TABLE `replay_players` (
 --> statement-breakpoint
 CREATE TABLE `replays` (
 	`id` text PRIMARY KEY NOT NULL,
-	`owner` text NOT NULL,
+	`owner` text,
 	`type` text NOT NULL,
 	`slug` text NOT NULL,
 	`match_id` text,

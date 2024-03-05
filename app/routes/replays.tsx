@@ -7,7 +7,9 @@ import {
 } from "@remix-run/cloudflare";
 import { useFetcher } from "@remix-run/react";
 import { decode } from "@shelacek/ubjson";
+import { InferInsertModel } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
+import { generateSlug } from "random-word-slugs";
 import { useState } from "react";
 import {
   Button,
@@ -32,7 +34,7 @@ import { twMerge as cn } from "tailwind-merge";
 import { shortCharactersExt, stages } from "~/common/names";
 import { ReplayType } from "~/common/types";
 import { parseReplay } from "~/parser";
-import { replays as replaysSchema } from "~/schema";
+import * as schema from "~/schema";
 import { queries } from "~/search/queries";
 import { search } from "~/search/search";
 import { CharacterFilter, StageFilter, store } from "~/store";
@@ -44,13 +46,15 @@ const pageSize = 10;
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const db = drizzle(context.cloudflare.env.DB);
-  const replays = await db.select().from(replaysSchema);
+  const replays = await db.select().from(schema.replays);
   return json({
     replays,
   });
 }
 
 export async function action({ context, request }: ActionFunctionArgs) {
+  const { DB, BUCKET } = context.cloudflare.env;
+  const db = drizzle(DB);
   const uploadHandler = unstable_createMemoryUploadHandler({
     maxPartSize: 20_000_000,
   });
@@ -64,9 +68,39 @@ export async function action({ context, request }: ActionFunctionArgs) {
   const { raw, metadata } = decode(buffer, { useTypedArrays: true });
   const replay = parseReplay(metadata, raw);
 
-  return json({
-    settings: replay.settings,
-  });
+  const id = crypto.randomUUID();
+  const slug = generateSlug(3, { format: "camel" });
+  const dbReplay: InferInsertModel<typeof schema.replays> = {
+    id,
+    slug,
+    type: replay.type,
+    stageId: replay.settings.stageId,
+    startTimestamp: replay.settings.startTimestamp,
+    matchId: replay.settings.matchId,
+    gameNumber: replay.settings.gameNumber,
+    tiebreakerNumber: replay.settings.tiebreakerNumber,
+  };
+  const dbPlayers: InferInsertModel<typeof schema.replayPlayers>[] =
+    replay.settings.playerSettings.filter(Boolean).map((player) => ({
+      replayId: id,
+      playerIndex: player.playerIndex,
+      connectCode: player.connectCode,
+      displayName: player.displayName,
+      nametag: player.nametag,
+      teamId: player.teamId,
+      externalCharacterId: player.externalCharacterId,
+      costumeIndex: player.costumeIndex,
+    }));
+
+  await BUCKET.put(id, buffer);
+  await db.batch([
+    db.insert(schema.replays).values(dbReplay),
+    ...dbPlayers.map((dbPlayer) =>
+      db.insert(schema.replayPlayers).values(dbPlayer),
+    ),
+  ]);
+
+  return json({ slug });
 }
 
 export default function Page() {
