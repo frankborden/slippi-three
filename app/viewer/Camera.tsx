@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { MathUtils, type OrthographicCamera } from "three";
+import { type OrthographicCamera } from "three";
 
 import { store } from "~/store";
 
