@@ -64,6 +64,17 @@ export interface Store {
   setReplay: (replay: ReplayData) => void;
   renderData: RenderData[][] | null;
   setRenderData: (renderData: RenderData[][]) => void;
+  cameraPositions:
+    | { left: number; right: number; top: number; bottom: number }[]
+    | null;
+  setCameraPositions: (
+    cameraPositions: {
+      left: number;
+      right: number;
+      top: number;
+      bottom: number;
+    }[],
+  ) => void;
   paused: boolean;
   setPaused: (paused: boolean) => void;
   speed: number;
@@ -117,6 +128,15 @@ export const store = create<Store>((set) => ({
   setReplay: (replay: ReplayData) => set({ replay }),
   renderData: null,
   setRenderData: (renderData: RenderData[][]) => set({ renderData }),
+  cameraPositions: null,
+  setCameraPositions: (
+    cameraPositions: {
+      left: number;
+      right: number;
+      top: number;
+      bottom: number;
+    }[],
+  ) => set({ cameraPositions }),
   paused: false,
   setPaused: (paused: boolean) => set({ paused }),
   speed: 1,

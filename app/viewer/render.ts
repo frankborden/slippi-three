@@ -1,3 +1,5 @@
+import { MathUtils } from "three";
+
 import { actions, charactersInt } from "~/common/names";
 import type {
   PlayerState,
@@ -7,6 +9,70 @@ import type {
   ReplayData,
 } from "~/common/types";
 import { actionMapByInternalId } from "~/viewer/characters";
+
+export function renderCamera(renderData: RenderData[][]) {
+  const positions: {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+  }[] = [];
+  let lastPosition = { left: 0, right: 0, top: 0, bottom: 0 };
+
+  for (let frame = 0; frame < renderData.length; frame++) {
+    const focusPoints = renderData[frame]
+      .filter(({ animationName }) => animationName !== "")
+      .map(({ playerState }) => ({
+        x: playerState.xPosition,
+        y: playerState.yPosition,
+      }));
+    if (focusPoints.length === 0) {
+      focusPoints.push({ x: 0, y: 0 });
+    }
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (const { x, y } of focusPoints) {
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y);
+      maxY = Math.max(maxY, y);
+    }
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    const width = Math.max(100, maxX - minX + 20);
+    const height = Math.max(120, maxY - minY + 20);
+    const aspect = 73 / 60;
+    const targetWidth = Math.max(width, height * aspect);
+    const targetHeight = targetWidth / aspect;
+    const smoothness = 0.06;
+    positions.push({
+      left: MathUtils.lerp(
+        lastPosition.left,
+        midX - targetWidth / 2,
+        smoothness,
+      ),
+      right: MathUtils.lerp(
+        lastPosition.right,
+        midX + targetWidth / 2,
+        smoothness,
+      ),
+      top: MathUtils.lerp(
+        lastPosition.top,
+        midY + targetHeight / 2,
+        smoothness,
+      ),
+      bottom: MathUtils.lerp(
+        lastPosition.bottom,
+        midY - targetHeight / 2,
+        smoothness,
+      ),
+    });
+    lastPosition = positions.at(-1)!;
+  }
+  return positions;
+}
 
 export function renderReplay(replay: ReplayData): RenderData[][] {
   return replay.frames.map((frame) =>

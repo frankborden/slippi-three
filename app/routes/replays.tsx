@@ -40,7 +40,7 @@ import { search } from "~/search/search";
 import { CharacterFilter, StageFilter, store } from "~/store";
 import { Controls } from "~/viewer/Controls";
 import { Replay } from "~/viewer/Replay";
-import { renderReplay } from "~/viewer/render";
+import { renderCamera, renderReplay } from "~/viewer/render";
 
 const pageSize = 10;
 
@@ -267,6 +267,7 @@ function Replays() {
   const { stubs: cloudStubs } = useLoaderData<typeof loader>();
 
   const {
+    setCameraPositions,
     setRenderData,
     setReplay,
     setFrame,
@@ -340,7 +341,9 @@ function Replays() {
           const replay = parseReplay(metadata, raw);
           setSelectedStub(stub);
           setReplay(replay);
-          setRenderData(renderReplay(replay));
+          const renderData = renderReplay(replay);
+          setRenderData(renderData);
+          setCameraPositions(renderCamera(renderData));
           setFrame(0);
           setPaused(false);
           setSpeed(1);
