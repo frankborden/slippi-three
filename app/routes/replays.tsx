@@ -5,9 +5,9 @@ import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from "@remix-run/cloudflare";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import { decode } from "@shelacek/ubjson";
-import { InferInsertModel } from "drizzle-orm";
+import { InferInsertModel, SQL, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { generateSlug } from "random-word-slugs";
 import { useState } from "react";
@@ -32,7 +32,7 @@ import {
 import { twMerge as cn } from "tailwind-merge";
 
 import { shortCharactersExt, stages } from "~/common/names";
-import { ReplayType } from "~/common/types";
+import { ReplayStub, ReplayType } from "~/common/types";
 import { parseReplay } from "~/parser";
 import * as schema from "~/schema";
 import { queries } from "~/search/queries";
@@ -45,10 +45,33 @@ import { renderReplay } from "~/viewer/render";
 const pageSize = 10;
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  const db = drizzle(context.cloudflare.env.DB);
-  const replays = await db.select().from(schema.replays);
+  const db = drizzle(context.cloudflare.env.DB, { schema });
+
+  const results = await db.query.replays.findMany({
+    with: { replayPlayers: true },
+  });
+  const stubs: (ReplayStub & { slug: string })[] = results.map((replay) => ({
+    type: replay.type as ReplayType,
+    slug: replay.slug,
+    stageId: replay.stageId,
+    startTimestamp: replay.startTimestamp,
+    matchId: replay.matchId ?? undefined,
+    gameNumber: replay.gameNumber ?? undefined,
+    tiebreakerNumber: replay.tiebreakerNumber ?? undefined,
+    players: replay.replayPlayers.map((player) => ({
+      replayId: replay.id,
+      playerIndex: player.playerIndex,
+      connectCode: player.connectCode ?? undefined,
+      displayName: player.displayName ?? undefined,
+      nametag: player.nametag ?? undefined,
+      teamId: player.teamId ?? undefined,
+      externalCharacterId: player.externalCharacterId,
+      costumeIndex: player.costumeIndex,
+    })),
+  }));
+
   return json({
-    replays,
+    stubs,
   });
 }
 
@@ -241,6 +264,8 @@ function Filters() {
 }
 
 function Replays() {
+  const { stubs: cloudStubs } = useLoaderData<typeof loader>();
+
   const {
     setRenderData,
     setReplay,
@@ -253,11 +278,15 @@ function Replays() {
     selectedStub,
     setSpeed,
     filters,
+    currentSource,
     setCurrentPage,
     setHighlights,
   } = store();
 
-  const stubs = localStubs;
+  const stubs =
+    currentSource === "personal"
+      ? localStubs
+      : cloudStubs.map((s) => [s, new File([], s.slug)] as const);
   const filteredStubs = stubs.filter(([stub]) => {
     const allowedStages = filters
       .filter((f): f is StageFilter => f.type === "stage")
