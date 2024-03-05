@@ -17,7 +17,7 @@ export function renderCamera(renderData: RenderData[][]) {
     top: number;
     bottom: number;
   }[] = [];
-  let lastPosition = { left: 0, right: 0, top: 0, bottom: 0 };
+  let lastPosition = { left: -73, right: 73, top: 60, bottom: -60 };
 
   for (let frame = 0; frame < renderData.length; frame++) {
     const focusPoints = renderData[frame]

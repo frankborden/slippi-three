@@ -151,7 +151,7 @@ export default function Page() {
         {replay && (
           <>
             <button onClick={() => upload()}>Upload</button>
-            <div className="relative flex flex-col overflow-y-auto rounded border border-zinc-700 bg-zinc-950">
+            <div className="relative flex shrink flex-col overflow-y-auto rounded border border-zinc-700 bg-zinc-950">
               <Replay key={openedTimestamp} />
             </div>
             <Controls />
