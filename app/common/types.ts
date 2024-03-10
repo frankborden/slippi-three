@@ -5,6 +5,7 @@ export type ReplayType =
   | "old online"
   | "offline";
 export interface ReplayStub {
+  slug: string;
   type: ReplayType;
   stageId: number;
   startTimestamp: string;

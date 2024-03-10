@@ -39,7 +39,7 @@ export type Filter =
 
 export interface Store {
   // Local files
-  addFiles: (files: File[]) => void;
+  addFiles: (files: File[]) => Promise<void>;
   parseProgress: number | undefined;
   setParseProgress: (parseProgress: number | undefined) => void;
   localStubs: [ReplayStub, File][];
@@ -52,8 +52,8 @@ export interface Store {
   setFilters: (filters: Filter[]) => void;
   currentPage: number;
   setCurrentPage: (currentPage: number) => void;
-  selectedStub: ReplayStub | undefined;
-  setSelectedStub: (selectedStub: ReplayStub | undefined) => void;
+  selectedStub: [ReplayStub, File] | undefined;
+  setSelectedStub: (selectedStub: [ReplayStub, File] | undefined) => void;
 
   // Viewer
   openedTimestamp: number;
@@ -87,7 +87,19 @@ export interface Store {
 
 export const store = create<Store>((set) => ({
   // Local files
-  addFiles: (files: File[]) => worker?.postMessage(files),
+  addFiles: (files: File[]) =>
+    new Promise((resolve) => {
+      worker!.onmessage = (event) => {
+        if (event.data.progress !== undefined) {
+          store.getState().setParseProgress(event.data.progress);
+        } else {
+          store.getState().setLocalStubs(event.data.stubs);
+          store.getState().setParseProgress(undefined);
+          resolve(undefined);
+        }
+      };
+      worker!.postMessage(files);
+    }),
   parseProgress: undefined,
   setParseProgress: (parseProgress: number | undefined) =>
     set({ parseProgress }),
@@ -116,7 +128,7 @@ export const store = create<Store>((set) => ({
   currentPage: 0,
   setCurrentPage: (currentPage: number) => set({ currentPage }),
   selectedStub: undefined,
-  setSelectedStub: (selectedStub: ReplayStub | undefined) =>
+  setSelectedStub: (selectedStub: [ReplayStub, File] | undefined) =>
     set({ selectedStub }),
 
   // Viewer
@@ -149,14 +161,3 @@ export const store = create<Store>((set) => ({
   setHighlights: (highlights: Record<string, Highlight[]>) =>
     set({ highlights }),
 }));
-
-if (worker) {
-  worker.onmessage = (event) => {
-    if (event.data.progress !== undefined) {
-      store.getState().setParseProgress(event.data.progress);
-    } else {
-      store.getState().setLocalStubs(event.data.stubs);
-      store.getState().setParseProgress(undefined);
-    }
-  };
-}

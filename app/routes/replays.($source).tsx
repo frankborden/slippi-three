@@ -1,5 +1,9 @@
 import { LoaderFunctionArgs, json } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
+import {
+  ClientLoaderFunctionArgs,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 import { drizzle } from "drizzle-orm/d1";
 import {
   Button,
@@ -15,7 +19,12 @@ import { ReplayStub, ReplayType } from "~/common/types";
 import * as schema from "~/schema";
 import { CharacterFilter, StageFilter, store } from "~/store";
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ context, params }: LoaderFunctionArgs) {
+  if (params.source === "personal") {
+    return json({
+      stubs: [],
+    });
+  }
   const db = drizzle(context.cloudflare.env.DB, { schema });
 
   const results = await db.query.replays.findMany({
@@ -46,25 +55,25 @@ export async function loader({ context }: LoaderFunctionArgs) {
   });
 }
 
+export function clientLoader({
+  params,
+  serverLoader,
+}: ClientLoaderFunctionArgs) {
+  if (params.source === "personal") {
+    return { stubs: store.getState().localStubs.map(([stub]) => stub) };
+  } else {
+    return serverLoader();
+  }
+}
+
 const pageSize = 10;
 
 export default function Page() {
-  const { stubs: cloudStubs } = useLoaderData<typeof loader>();
+  const { stubs } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
+  const { currentPage, filters, setCurrentPage } = store();
 
-  const {
-    localStubs,
-    currentPage,
-    selectedStub,
-    filters,
-    currentSource,
-    setCurrentPage,
-  } = store();
-
-  const stubs =
-    currentSource === "personal"
-      ? localStubs
-      : cloudStubs.map((s) => [s, new File([], s.slug)] as const);
-  const filteredStubs = stubs.filter(([stub]) => {
+  const filteredStubs = stubs.filter((stub) => {
     const allowedStages = filters
       .filter((f): f is StageFilter => f.type === "stage")
       .map((f) => f.stageId);
@@ -96,19 +105,13 @@ export default function Page() {
         aria-label="Replays"
         selectionMode="single"
         className="-ml-2 grid w-full grid-cols-[repeat(5,auto)] gap-x-2 gap-y-1"
-        selectedKeys={
-          selectedStub
-            ? [
-                `${selectedStub.matchId ?? selectedStub.startTimestamp}~${selectedStub.gameNumber}~${selectedStub.tiebreakerNumber}`,
-              ]
-            : []
-        }
+        selectedKeys={searchParams.getAll("slug")}
       >
-        {([stub, file]) => (
+        {(stub) => (
           <ListBoxItem
-            id={`${stub.matchId ?? stub.startTimestamp}~${stub.gameNumber}~${stub.tiebreakerNumber}`}
-            textValue={file.name}
-            href={`/replays?slug=local-${file.name}`}
+            id={stub.slug}
+            textValue={stub.slug}
+            href={`?slug=${stub.slug}`}
             className={({ isHovered, isSelected }) =>
               cn(
                 "group col-span-full grid grid-cols-subgrid items-center rounded px-3 py-2 focus:outline-none",

@@ -10,6 +10,9 @@ import {
   Outlet,
   useFetcher,
   useLoaderData,
+  useLocation,
+  useNavigate,
+  useRevalidator,
 } from "@remix-run/react";
 import { decode } from "@shelacek/ubjson";
 import { InferInsertModel } from "drizzle-orm";
@@ -99,24 +102,31 @@ export function loader({ request }: LoaderFunctionArgs) {
   return {};
 }
 
-export function clientLoader({ request }: ClientLoaderFunctionArgs): {
-  localFile?: string;
+export function clientLoader({
+  request,
+  serverLoader,
+}: ClientLoaderFunctionArgs): {
+  stub?: ReplayStub;
+  file?: File;
 } {
   const url = new URL(request.url);
   const slug = url.searchParams.get("slug");
   if (!slug) return {};
-  return {
-    localFile: slug.slice(6),
-  };
+  if (slug?.startsWith("local-")) {
+    const [stub, file] =
+      store
+        .getState()
+        .localStubs.find(([, file]) => file.name === slug.slice(6)) ?? [];
+    return { stub, file };
+  }
+  return serverLoader() as { stub?: ReplayStub; file?: File };
 }
 
 export default function Page() {
-  const { localFile } = useLoaderData<typeof clientLoader>();
+  const { stub, file } = useLoaderData<typeof clientLoader>();
   const {
     openedTimestamp,
     replay,
-    selectedStub,
-    localStubs,
     setReplay,
     setSelectedStub,
     setRenderData,
@@ -128,15 +138,13 @@ export default function Page() {
     setOpenedTimestamp,
   } = store();
   useEffect(() => {
-    const match = localStubs.find(([, file]) => file.name === localFile);
-    if (!match) return;
-    const [stub, file] = match;
+    if (!file || !stub) return;
     file.arrayBuffer().then(async (buffer) => {
       const { raw, metadata } = decode(buffer, {
         useTypedArrays: true,
       });
       const replay = parseReplay(metadata, raw);
-      setSelectedStub(stub);
+      setSelectedStub([stub, file]);
       setReplay(replay);
       const renderData = renderReplay(replay);
       setRenderData(renderData);
@@ -154,12 +162,11 @@ export default function Page() {
         ),
       );
     });
-  }, [localFile]);
+  }, [stub, file]);
   const fetcher = useFetcher({ key: "uploadReplay" });
 
   function upload() {
     const form = new FormData();
-    const file = localStubs.find(([stub]) => stub === selectedStub)?.[1];
     if (file) {
       form.append("replay", file);
       fetcher.submit(form, { method: "POST", encType: "multipart/form-data" });
@@ -198,27 +205,32 @@ export default function Page() {
 }
 
 function Sources() {
-  const { addFiles, setCurrentSource, setCurrentPage, currentSource } = store();
+  const { addFiles } = store();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const revalidator = useRevalidator();
+  const source = location.pathname.split("replays/").at(-1)!;
 
   return (
-    <Tabs
-      onSelectionChange={(key) => {
-        setCurrentSource(key as any);
-        setCurrentPage(0);
-      }}
-      selectedKey={currentSource}
-    >
+    <Tabs selectedKey={source}>
       <TabList className="mb-3 flex w-max gap-3 rounded-lg border border-zinc-600 bg-zinc-950 p-1 text-sm *:rounded *:px-2 *:outline-none *:transition-colors *:duration-200 [&>[data-hovered]]:cursor-pointer [&>[data-hovered]]:bg-zinc-700 [&>[data-hovered]]:text-zinc-100 [&>[data-selected]]:bg-zinc-300 [&>[data-selected]]:text-zinc-950">
-        <Tab id="personal">Personal</Tab>
-        <Tab id="uploads">Uploads</Tab>
-        <Tab id="events">Events</Tab>
+        <Tab id="personal" href="/replays/personal">
+          Personal
+        </Tab>
+        <Tab id="uploads" href="/replays/uploads">
+          Uploads
+        </Tab>
+        <Tab id="events" href="/replays/events">
+          Events
+        </Tab>
       </TabList>
       <TabPanel id="personal">
         <div className="flex gap-4 text-sm">
           <FileTrigger
-            onSelect={(files: FileList | null) => {
+            onSelect={async (files: FileList | null) => {
               if (!files) return;
-              addFiles(Array.from(files));
+              await addFiles(Array.from(files));
+              revalidator.revalidate();
             }}
             acceptedFileTypes={[".slp"]}
             allowsMultiple
@@ -229,9 +241,10 @@ function Sources() {
           </FileTrigger>
           <FileTrigger
             acceptDirectory
-            onSelect={(files: FileList | null) => {
+            onSelect={async (files: FileList | null) => {
               if (!files) return;
-              addFiles(Array.from(files));
+              await addFiles(Array.from(files));
+              revalidator.revalidate();
             }}
           >
             <Button className="rounded bg-zinc-300 px-3 py-0.5 text-zinc-950 hover:bg-zinc-100 hover:text-black">

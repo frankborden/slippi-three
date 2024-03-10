@@ -18,12 +18,14 @@ self.onmessage = async (event) => {
     const reader = new FileReader();
     reader.readAsArrayBuffer(file.slice(0, 2000));
     await new Promise((resolve) => (reader.onload = resolve));
-    let stubWithoutStartTimestamp:
-      | Omit<ReplayStub, "startTimestamp">
+    let stubWithoutStartTimestampAndSlug:
+      | Omit<ReplayStub, "startTimestamp" | "slug">
       | undefined = undefined;
     try {
       if (file.name.endsWith(".slp")) {
-        stubWithoutStartTimestamp = parseStub(reader.result as ArrayBuffer);
+        stubWithoutStartTimestampAndSlug = parseStub(
+          reader.result as ArrayBuffer,
+        );
       }
     } catch (e) {
       console.error(`Error parsing file ${file.name}`, e);
@@ -32,9 +34,9 @@ self.onmessage = async (event) => {
 
     let startTimestamp: string;
     if (
-      stubWithoutStartTimestamp !== undefined &&
-      stages[stubWithoutStartTimestamp.stageId] !== undefined &&
-      stubWithoutStartTimestamp.players.every(
+      stubWithoutStartTimestampAndSlug !== undefined &&
+      stages[stubWithoutStartTimestampAndSlug.stageId] !== undefined &&
+      stubWithoutStartTimestampAndSlug.players.every(
         (p) => p.externalCharacterId <= 25,
       )
     ) {
@@ -55,7 +57,11 @@ self.onmessage = async (event) => {
         const replay = parseReplay(metadata, raw);
         startTimestamp = replay.settings.startTimestamp;
       }
-      const stub = { ...stubWithoutStartTimestamp, startTimestamp };
+      const stub = {
+        ...stubWithoutStartTimestampAndSlug,
+        startTimestamp,
+        slug: `local-${file.name}`,
+      };
       stubs.push([stub, file]);
     }
     self.postMessage({ progress: 100 * ((i + 1) / event.data.length) });

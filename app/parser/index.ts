@@ -26,7 +26,7 @@ import { firstVersion, readUint } from "./utils";
  */
 export function parseStub(
   raw: ArrayBufferLike,
-): Omit<ReplayStub, "startTimestamp"> {
+): Omit<ReplayStub, "startTimestamp" | "slug"> {
   const rawData = new DataView(raw, 15);
   const commandPayloadSizes = parseEventPayloadsEvent(rawData, 0x00);
   const gameSettings = parseGameStartEvent(
